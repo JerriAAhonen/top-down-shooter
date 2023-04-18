@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace tds.Input
 {
-	public class InputManager : Singleton<InputManager>
+	public class InputManager : Singleton<InputManager> // Could this be static instead of monobehaviour?
 	{
 		private PlayerInputActions pia;
 		private InputAction movementAction;
@@ -13,7 +13,7 @@ namespace tds.Input
 		
 		public bool IsReady { get; private set; }
 		public Vector2 MovementInput { get; private set; }
-		public Vector2 LookInput { get; private set; }
+		public Vector2 MousePosition { get; private set; }
 
 		public event Action Jump;
 		public event Action<bool, bool> Crouch;
@@ -38,7 +38,7 @@ namespace tds.Input
 			if (!IsReady) return;
 			
 			MovementInput = movementAction.ReadValue<Vector2>();
-			LookInput = lookAction.ReadValue<Vector2>();
+			MousePosition = lookAction.ReadValue<Vector2>();
 		}
 
 		private void OnEnable()
