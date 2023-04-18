@@ -43,7 +43,12 @@ public class PlayerController : MonoBehaviour
 			var point = ray.GetPoint(intersectionDist);
 			var target = new Vector3(point.x, transform.position.y, point.z);
 			var rotation = Quaternion.LookRotation(target - transform.position);
-			transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 		}
+	}
+
+	private void OnDrawGizmos()
+	{
+		Debug.DrawRay(transform.position, transform.forward * 20f);
 	}
 }
