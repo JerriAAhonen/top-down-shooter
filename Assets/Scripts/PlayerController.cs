@@ -6,8 +6,10 @@ using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : MonoBehaviour
 {
-	[SerializeField] float movementSpeed;
-	[SerializeField] float rotationSpeed;
+	[SerializeField] private float movementSpeed;
+	[SerializeField] private float rotationSpeed;
+	[Header("Aim")]
+	[SerializeField] private LineRenderer aimLine;
 
 	private CharacterController cc;
 	private Vector3 velocity;
@@ -44,11 +46,15 @@ public class PlayerController : MonoBehaviour
 			var target = new Vector3(point.x, transform.position.y, point.z);
 			var rotation = Quaternion.LookRotation(target - transform.position);
 			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+
+			// Aiming line renderer
+			var aimLineTarget = new Vector3(0f, 0.1f, Vector3.Distance(target, transform.position));
+			aimLine.SetPosition(1, aimLineTarget);
 		}
 	}
 
 	private void OnDrawGizmos()
 	{
-		Debug.DrawRay(transform.position, transform.forward * 20f);
+		//Debug.DrawRay(transform.position, transform.forward * 20f);
 	}
 }
