@@ -1,0 +1,12 @@
+Library/*
+Logs/*
+UserSettings/*
+obj/*
+*.csproj
+*.sln
+.idea/*
+Temp/*
+mono_crash.*
+*.DS_Store
+.vs
+Builds
