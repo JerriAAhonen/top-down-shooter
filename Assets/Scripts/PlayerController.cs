@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using tds.Input;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,11 +9,15 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float rotationSpeed;
 	[Header("Aim")]
 	[SerializeField] private LineRenderer aimLine;
+	[SerializeField] private CameraController playerCamera;
 
 	private CharacterController cc;
 	private Vector3 velocity;
 	private Camera cam;
 	private Plane mousePosPlane;
+
+	// Debug
+	
 
 	private void Awake()
 	{
@@ -46,6 +49,8 @@ public class PlayerController : MonoBehaviour
 			var target = new Vector3(point.x, transform.position.y, point.z);
 			var rotation = Quaternion.LookRotation(target - transform.position);
 			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+
+			playerCamera.SetMousePos(target);
 
 			// Aiming line renderer
 			var aimLineTarget = new Vector3(0f, 0.1f, Vector3.Distance(target, transform.position));
