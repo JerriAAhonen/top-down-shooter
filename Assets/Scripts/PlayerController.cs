@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
 	[Header("Aim")]
 	[SerializeField] private LineRenderer aimLine;
 	[SerializeField] private CameraController playerCamera;
+	[Header("Animations")]
+	[SerializeField] private Animator animator;
 
 	private CharacterController cc;
 	private Vector3 velocity;
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
 	{
 		PlayerMovement();
 		PlayerRotation();
+		UpdateAnimations();
 	}
 
 	private void PlayerMovement()
@@ -58,8 +61,12 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void OnDrawGizmos()
+	private void UpdateAnimations()
 	{
-		//Debug.DrawRay(transform.position, transform.forward * 20f);
+		var localVelocity = transform.InverseTransformDirection(velocity);
+		localVelocity /= Time.deltaTime;
+
+		animator.SetFloat("MovementSpeedX", localVelocity.x);
+		animator.SetFloat("MovementSpeedZ", localVelocity.z);
 	}
 }
