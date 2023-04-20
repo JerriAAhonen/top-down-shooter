@@ -13,6 +13,7 @@ public class PrefabDb : ScriptableObject
 		visualsPrefab = actorVisuals[data.visualsPrefab];
 	}
 	
+#if UNITY_EDITOR
 	private void OnValidate()
 	{
 		NetworkPrefabsList list = null;
@@ -36,4 +37,5 @@ public class PrefabDb : ScriptableObject
 		UnityEditor.EditorUtility.SetDirty(list);
 		UnityEditor.AssetDatabase.SaveAssets();
 	}
+#endif
 }
