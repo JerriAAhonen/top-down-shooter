@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
@@ -25,6 +23,8 @@ public class NetworkInitializer: MonoBehaviour
 				Debug.LogError("Failed to start host.");
 				yield break;
 			}
+			yield return new WaitForSeconds(2.0f);
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { actorPrefab = 0, visualsPrefab = 0 });
 		}
 		else
 		{
@@ -33,10 +33,13 @@ public class NetworkInitializer: MonoBehaviour
 				Debug.LogError("Failed to start client.");
 				yield break;
 			}
-		}
 
-		yield return new WaitForSeconds(2.0f);
-		GlobalRpc.Instance.SpawnMeServerRpc(0);
+			while (!mgr.IsConnectedClient)
+				yield return new WaitForSeconds(0.1f);
+
+			yield return new WaitForSeconds(2.0f);
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { actorPrefab = 0, visualsPrefab = 1 });
+		}
 	}
 }
 

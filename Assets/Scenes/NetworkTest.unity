@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 498067014}
   - component: {fileID: 498067015}
   m_Layer: 0
-  m_Name: GlobalRpc
+  m_Name: MainRpc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,6 +181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d9287e523f78604d948fd069526b7d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabs: {fileID: 11400000, guid: b6e35fc73d12c0740bfcb475c00caef0, type: 2}
 --- !u!1 &1596249883
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,7 +331,7 @@ GameObject:
   - component: {fileID: 1813689444}
   - component: {fileID: 1813689443}
   m_Layer: 0
-  m_Name: Network
+  m_Name: Init
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

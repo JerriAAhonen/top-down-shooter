@@ -10,3 +10,4 @@ mono_crash.*
 *.DS_Store
 .vs
 Builds
+*.user
