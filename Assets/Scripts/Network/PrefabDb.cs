@@ -35,7 +35,6 @@ public class PrefabDb : ScriptableObject
 			list.Add(new NetworkPrefab { Prefab = p });
 
 		UnityEditor.EditorUtility.SetDirty(list);
-		UnityEditor.AssetDatabase.SaveAssets();
 	}
 #endif
 }
