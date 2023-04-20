@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Transform shootPoint;
 	[SerializeField] private Projectile projectilePrefab;
 	[SerializeField] private ParticleSystem projectilePS;
+	[SerializeField] private ParticleSystem casingPS;
 	[SerializeField] private ParticleSystem muzzleFlashPS;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
@@ -108,6 +109,7 @@ public class PlayerController : MonoBehaviour
 		projectile.Init(projectilePool.Release);*/
 
 		projectilePS.Play();
+		casingPS.Play();
 		muzzleFlashPS.Play();
 	}
 
