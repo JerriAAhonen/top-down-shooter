@@ -19,7 +19,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 		ps.GetCollisionEvents(other, events);
 		foreach (var e in events)
 		{
-			Instantiate(impactPS, e.intersection, Quaternion.LookRotation(e.normal));
+			Instantiate(impactPS, e.intersection, Quaternion.LookRotation(Vector3.Reflect(e.velocity, e.normal)));
 		}
 	}
 }
