@@ -1,16 +1,23 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
 public class PrefabDb : ScriptableObject
 {
-	[SerializeField] private GameObject[] actors;
-	[SerializeField] private GameObject[] actorVisuals;
+	[SerializeField] private Actors actors;
 	
 	public void GetActorPrefabs(PlayerSpawnData data, out GameObject actorPrefab, out GameObject visualsPrefab)
 	{
-		actorPrefab = actors[data.actorPrefab];
-		visualsPrefab = actorVisuals[data.visualsPrefab];
+		actorPrefab = actors.roots[data.rootPrefab];
+		visualsPrefab = actors.visuals[data.visualPrefab];
+	}
+
+	[Serializable]
+	public class Actors
+	{
+		public GameObject[] roots;
+		public GameObject[] visuals;
 	}
 	
 #if UNITY_EDITOR
@@ -19,8 +26,8 @@ public class PrefabDb : ScriptableObject
 		NetworkPrefabsList list = null;
 
 		var all = new List<GameObject>();
-		all.AddRange(actors);
-		all.AddRange(actorVisuals);
+		all.AddRange(actors.roots);
+		all.AddRange(actors.visuals);
 		all.RemoveAll(Is.Null);
 		all.RemoveDuplicates();
 

@@ -24,7 +24,7 @@ public class NetworkInitializer: MonoBehaviour
 				yield break;
 			}
 			yield return new WaitForSeconds(2.0f);
-			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { actorPrefab = 0, visualsPrefab = 0 });
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0, visualPrefab = 0 });
 		}
 		else
 		{
@@ -38,7 +38,7 @@ public class NetworkInitializer: MonoBehaviour
 				yield return new WaitForSeconds(0.1f);
 
 			yield return new WaitForSeconds(2.0f);
-			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { actorPrefab = 0, visualsPrefab = 1 });
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0, visualPrefab = 1 });
 		}
 	}
 }

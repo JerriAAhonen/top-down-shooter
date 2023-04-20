@@ -50,6 +50,6 @@ public class MainRpc : NetworkBehaviour
 
 public struct PlayerSpawnData : INetworkSerializeByMemcpy
 {
-	public int actorPrefab;
-	public int visualsPrefab;
+	public int rootPrefab;
+	public int visualPrefab;
 }
