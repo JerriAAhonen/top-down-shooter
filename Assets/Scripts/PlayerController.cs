@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private ParticleSystem projectilePS;
 	[SerializeField] private ParticleSystem casingPS;
 	[SerializeField] private ParticleSystem muzzleFlashPS;
+	[SerializeField] private ParticleSystem muzzleSmokePS;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
 
@@ -105,6 +106,7 @@ public class PlayerController : MonoBehaviour
 			projectilePS.Play();
 			casingPS.Play();
 			muzzleFlashPS.Play();
+			muzzleSmokePS.Play();
 		}
 	}
 
