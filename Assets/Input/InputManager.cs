@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace tds.Input
 {
-	public class InputManager : Singleton<InputManager> // Could this be static instead of monobehaviour?
+	public class InputManager : Singleton<InputManager>
 	{
 		private PlayerInputActions pia;
 		private InputAction movementAction;
@@ -25,8 +25,10 @@ namespace tds.Input
 		public event Action Reload;
 		public event Action SwitchWeapon;
 
-		private void Start()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			pia ??= new PlayerInputActions();
 			
 			EnableInput();

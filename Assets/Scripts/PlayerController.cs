@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using tds.Input;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class PlayerController : MonoBehaviour
 	[Header("Aim")]
 	[SerializeField] private LineRenderer aimLine;
 	[SerializeField] private CameraController playerCamera;
+	[Header("Shooting")]
+	[SerializeField] private Projectile projectilePrefab;
+	[SerializeField] private ParticleSystem projectilePS;
+	[SerializeField] private Transform shootPoint;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
 
@@ -18,21 +23,42 @@ public class PlayerController : MonoBehaviour
 	private Camera cam;
 	private Plane mousePosPlane;
 
-	// Debug
-	
+	private IObjectPool<Projectile> projectilePool;
 
 	private void Awake()
 	{
 		cc = GetComponent<CharacterController>();
 		cam = Camera.main;
 		mousePosPlane = new Plane(Vector3.up, Vector3.zero);
+
+		projectilePool = new ObjectPool<Projectile>(
+			CreateProjectile,
+			p =>
+			{
+				p.gameObject.SetActive(true);
+			},
+			p =>
+			{
+				p.gameObject.SetActive(false);
+			},
+			Destroy);
+
+		Projectile CreateProjectile()
+		{
+			return Instantiate(projectilePrefab);
+		}
+	}
+
+	private void Start()
+	{
+		InputManager.Instance.Shoot += PlayerShooting;
 	}
 
 	private void Update()
 	{
 		PlayerMovement();
 		PlayerRotation();
-		UpdateAnimations();
+		PlayerAnimations();
 	}
 
 	private void PlayerMovement()
@@ -56,12 +82,34 @@ public class PlayerController : MonoBehaviour
 			playerCamera.SetMousePos(target);
 
 			// Aiming line renderer
-			var aimLineTarget = new Vector3(0f, 0.1f, Vector3.Distance(target, transform.position));
+			var aimLineHeight = aimLine.GetPosition(0).y;
+			var aimLineTarget = new Vector3(0f, aimLineHeight, Vector3.Distance(target, transform.position));
 			aimLine.SetPosition(1, aimLineTarget);
 		}
 	}
 
-	private void UpdateAnimations()
+	private void PlayerShooting(bool shooting)
+	{
+		if (!shooting)
+			return;
+
+		// Raycast for htis
+		var ray = new Ray(shootPoint.position, transform.forward);
+		if (Physics.Raycast(ray, out var hit, 100f))
+		{
+			//Debug.Log($"Hit: {hit.collider.name}", hit.collider);
+		}
+
+		// Shoot physical projectile for visuals
+		/*var projectile = projectilePool.Get();
+		projectile.transform.position = shootPoint.position;
+		projectile.transform.rotation = transform.rotation;
+		projectile.Init(projectilePool.Release);*/
+
+		projectilePS.Play();
+	}
+
+	private void PlayerAnimations()
 	{
 		var localVelocity = transform.InverseTransformDirection(velocity);
 		localVelocity /= Time.deltaTime;
