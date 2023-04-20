@@ -13,7 +13,6 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private CameraController playerCamera;
 	[Header("Shooting")]
 	[SerializeField] private Transform shootPoint;
-	[SerializeField] private Projectile projectilePrefab;
 	[SerializeField] private ParticleSystem projectilePS;
 	[SerializeField] private ParticleSystem casingPS;
 	[SerializeField] private ParticleSystem muzzleFlashPS;
@@ -25,30 +24,11 @@ public class PlayerController : MonoBehaviour
 	private Camera cam;
 	private Plane mousePosPlane;
 
-	private IObjectPool<Projectile> projectilePool;
-
 	private void Awake()
 	{
 		cc = GetComponent<CharacterController>();
 		cam = Camera.main;
 		mousePosPlane = new Plane(Vector3.up, Vector3.zero);
-
-		projectilePool = new ObjectPool<Projectile>(
-			CreateProjectile,
-			p =>
-			{
-				p.gameObject.SetActive(true);
-			},
-			p =>
-			{
-				p.gameObject.SetActive(false);
-			},
-			Destroy);
-
-		Projectile CreateProjectile()
-		{
-			return Instantiate(projectilePrefab);
-		}
 	}
 
 	private void Start()
@@ -85,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
 			// Aiming line renderer
 			var aimLineHeight = aimLine.GetPosition(0).y;
-			var aimLineTarget = new Vector3(0f, aimLineHeight, Vector3.Distance(target, transform.position));
+			var aimLineTarget = new Vector3(0f, aimLineHeight, Vector3.Distance(target, shootPoint.position));
 			aimLine.SetPosition(1, aimLineTarget);
 		}
 	}
@@ -101,12 +81,6 @@ public class PlayerController : MonoBehaviour
 		{
 			//Debug.Log($"Hit: {hit.collider.name}", hit.collider);
 		}
-
-		// Shoot physical projectile for visuals
-		/*var projectile = projectilePool.Get();
-		projectile.transform.position = shootPoint.position;
-		projectile.transform.rotation = transform.rotation;
-		projectile.Init(projectilePool.Release);*/
 
 		projectilePS.Play();
 		casingPS.Play();
