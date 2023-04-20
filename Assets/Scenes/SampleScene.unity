@@ -1518,6 +1518,7 @@ MonoBehaviour:
   rotationSpeed: 10
   aimLine: {fileID: 331281405}
   playerCamera: {fileID: 1872672010}
+  shootingInterval: 0.1
   shootPoint: {fileID: 1158485889}
   projectilePS: {fileID: 966415051}
   casingPS: {fileID: 1066547212}
@@ -10155,7 +10156,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1066547210}
   serializedVersion: 8
-  lengthInSec: 5
+  lengthInSec: 20
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -10230,7 +10231,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 20
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -15273,6 +15274,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d6a250150a58a3a4bbff2dca1b954065,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 87a8d047b994ceb41a84b4a867da8f77, type: 2}
     - target: {fileID: 919132149155446097, guid: d6a250150a58a3a4bbff2dca1b954065,
         type: 3}
       propertyPath: m_Name
@@ -17327,6 +17333,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: de1bd3672414a7948af4a94abba2ef8c,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 87a8d047b994ceb41a84b4a867da8f77, type: 2}
     - target: {fileID: 919132149155446097, guid: de1bd3672414a7948af4a94abba2ef8c,
         type: 3}
       propertyPath: m_Name

@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LineRenderer aimLine;
 	[SerializeField] private CameraController playerCamera;
 	[Header("Shooting")]
+	[SerializeField] private float shootingInterval;
 	[SerializeField] private Transform shootPoint;
 	[SerializeField] private ParticleSystem projectilePS;
 	[SerializeField] private ParticleSystem casingPS;
@@ -33,13 +34,14 @@ public class PlayerController : MonoBehaviour
 
 	private void Start()
 	{
-		InputManager.Instance.Shoot += PlayerShooting;
+		InputManager.Instance.Shoot += OnShoot;
 	}
 
 	private void Update()
 	{
 		PlayerMovement();
 		PlayerRotation();
+		PlayerShooting();
 		PlayerAnimations();
 	}
 
@@ -70,21 +72,40 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void PlayerShooting(bool shooting)
+	private float timeSinceLastShot;
+	private bool currentlyShooting;
+
+	private void OnShoot(bool shooting)
 	{
-		if (!shooting)
+		currentlyShooting = shooting;
+	}
+
+	private void PlayerShooting()
+	{
+		timeSinceLastShot += Time.deltaTime;
+
+		if (!currentlyShooting)
 			return;
 
-		// Raycast for htis
-		var ray = new Ray(shootPoint.position, transform.forward);
-		if (Physics.Raycast(ray, out var hit, 100f))
+		if (timeSinceLastShot > shootingInterval)
 		{
-			//Debug.Log($"Hit: {hit.collider.name}", hit.collider);
+			Shoot();
+			timeSinceLastShot = 0f;
 		}
+		
+		void Shoot()
+		{
+			// Raycast for htis
+			var ray = new Ray(shootPoint.position, transform.forward);
+			if (Physics.Raycast(ray, out var hit, 100f))
+			{
+				//Debug.Log($"Hit: {hit.collider.name}", hit.collider);
+			}
 
-		projectilePS.Play();
-		casingPS.Play();
-		muzzleFlashPS.Play();
+			projectilePS.Play();
+			casingPS.Play();
+			muzzleFlashPS.Play();
+		}
 	}
 
 	private void PlayerAnimations()
