@@ -1013,6 +1013,85 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 223761035}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &225328799
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1158485889}
+    m_Modifications:
+    - target: {fileID: 5639112745519895327, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_Name
+      value: MuzzleFlashPS
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ffdb559e3fd615348a45f3f156c02c86, type: 3}
+--- !u!4 &225328800 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8001215068966405021, guid: ffdb559e3fd615348a45f3f156c02c86,
+    type: 3}
+  m_PrefabInstance: {fileID: 225328799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &292124097
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,6 +1521,7 @@ MonoBehaviour:
     type: 3}
   projectilePS: {fileID: 966415051}
   shootPoint: {fileID: 1158485889}
+  muzzleFlashPS: {fileID: 1396601291}
   animator: {fileID: 1651126966}
 --- !u!143 &331281404
 CharacterController:
@@ -4400,8 +4480,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 966415052}
-  - component: {fileID: 966415051}
+  - component: {fileID: 966415053}
   - component: {fileID: 966415050}
+  - component: {fileID: 966415051}
   m_Layer: 0
   m_Name: ProjectilePS
   m_TagString: Untagged
@@ -4499,7 +4580,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -4555,7 +4636,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -8303,7 +8384,7 @@ ParticleSystem:
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
-    collisionMessages: 0
+    collisionMessages: 1
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
@@ -9278,6 +9359,20 @@ Transform:
   m_Father: {fileID: 1158485889}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &966415053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966415049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4ebaed4a6d0453468a6e8b4f142c9ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactPS: {fileID: 4982065707525617736, guid: d19fde6ad6f2d184cbe2b32716eb5b17,
+    type: 3}
 --- !u!1 &980396712
 GameObject:
   m_ObjectHideFlags: 0
@@ -10225,6 +10320,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 966415052}
+  - {fileID: 225328800}
   m_Father: {fileID: 331281402}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10556,6 +10652,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1340418716}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!198 &1396601291 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4982065707525617736, guid: ffdb559e3fd615348a45f3f156c02c86,
+    type: 3}
+  m_PrefabInstance: {fileID: 225328799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1398712468
 GameObject:
   m_ObjectHideFlags: 0

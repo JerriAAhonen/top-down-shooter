@@ -12,9 +12,10 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LineRenderer aimLine;
 	[SerializeField] private CameraController playerCamera;
 	[Header("Shooting")]
+	[SerializeField] private Transform shootPoint;
 	[SerializeField] private Projectile projectilePrefab;
 	[SerializeField] private ParticleSystem projectilePS;
-	[SerializeField] private Transform shootPoint;
+	[SerializeField] private ParticleSystem muzzleFlashPS;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
 
@@ -107,6 +108,7 @@ public class PlayerController : MonoBehaviour
 		projectile.Init(projectilePool.Release);*/
 
 		projectilePS.Play();
+		muzzleFlashPS.Play();
 	}
 
 	private void PlayerAnimations()
