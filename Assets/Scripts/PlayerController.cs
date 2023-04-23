@@ -113,9 +113,10 @@ public class PlayerController : MonoBehaviour
 	private void PlayerAnimations()
 	{
 		var localVelocity = transform.InverseTransformDirection(velocity);
-		localVelocity /= Time.deltaTime;
+		localVelocity /= Time.deltaTime * movementSpeed;
+		localVelocity = localVelocity.Clamp(-1f, 1f);
 
-		animator.SetFloat("MovementSpeedX", localVelocity.x);
-		animator.SetFloat("MovementSpeedZ", localVelocity.z);
+		animator.SetFloat("X", localVelocity.x);
+		animator.SetFloat("Z", localVelocity.z);
 	}
 }
