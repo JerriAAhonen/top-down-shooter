@@ -61,7 +61,12 @@ public class PlayerController : MonoBehaviour
 		{
 			var point = ray.GetPoint(intersectionDist);
 			var target = new Vector3(point.x, transform.position.y, point.z);
-			var rotation = Quaternion.LookRotation(target - transform.position);
+
+			// Since the shootpoint is offset to the side, get the rotation from the shootpoint to the traget
+			var relativeRotationPos = shootPoint.position;
+			relativeRotationPos.y = 0f;
+
+			var rotation = Quaternion.LookRotation(target - relativeRotationPos);
 			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
 			playerCamera.SetMousePos(target);
