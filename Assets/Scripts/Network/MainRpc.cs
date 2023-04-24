@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ public class MainRpc : NetworkBehaviour
 {
 	public static MainRpc Instance { get; private set; }
 
-	[SerializeField] private PrefabDb prefabs;
+	[SerializeField] private SyncedPrefabDb prefabs;
 	
 	private void Awake()
 	{
@@ -30,26 +30,21 @@ public class MainRpc : NetworkBehaviour
 	{
 		NetworkUtil.Assert.IsHost();
 		
-		prefabs.GetActorPrefabs(data, out GameObject actorPrefab, out GameObject visualsPrefab);
+		prefabs.GetActorPrefabs(data, out GameObject actorPrefab);
 		
 		var go = Instantiate(actorPrefab);
+		
+		// TODO hackerino
+		var player = go.GetComponent<PlayerController>();
+		var field = player.GetType().GetField("playerCamera", BindingFlags.Instance | BindingFlags.NonPublic);
+		field.SetValue(player, FindFirstObjectByType<CameraController>());
+		
 		var no = go.GetComponent<NetworkObject>();
 		no.SpawnWithOwnership(id);
-		
-		var player = go.GetComponent<NetworkPlayer>();
-		Color[] colors = { Color.red, Color.cyan, Color.yellow };
-		int playerCount = NetworkManager.Singleton.ConnectedClients.Count;
-		player.data.Value = new PlayerData { color = colors[playerCount - 1] };
-		
-		var dyn = Instantiate(visualsPrefab);
-		var no2 = dyn.GetComponent<NetworkObject>();
-		no2.SpawnWithOwnership(id);
-		no2.TrySetParent(no, false);
 	}
 }
 
 public struct PlayerSpawnData : INetworkSerializeByMemcpy
 {
 	public int rootPrefab;
-	public int visualPrefab;
 }

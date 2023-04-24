@@ -3,35 +3,48 @@ using UnityEngine;
 
 public class NetworkPlayer : NetworkBehaviour
 {
-	[SerializeField]
-	private MeshRenderer meshRenderer;
-	[HideInInspector]
-	public NetworkVariable<PlayerData> data = new();
+	private readonly NetworkVariable<int> equippedWeapon = new();
+	private readonly NetworkVariable<float> animatorX = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+	private readonly NetworkVariable<float> animatorZ = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+	private Animator animator;
 
 	private void Awake()
 	{
-		data.OnValueChanged += UpdateVisuals;
+		animator = GetComponentInChildren<Animator>();
+	}
+
+	private void LateUpdate()
+	{
+		if (NetworkObject.IsOwner)
+		{
+			animatorX.Value = animator.GetFloat("X");
+			animatorZ.Value = animator.GetFloat("Z");
+		}
+		else
+		{
+			animator.SetFloat("X", animatorX.Value);
+			animator.SetFloat("Z", animatorZ.Value);
+		}
 	}
 
 	public override void OnNetworkSpawn()
 	{
-		UpdateVisuals(data.Value, data.Value);
+		if (NetworkObject.IsOwner)
+			return;
+		
+		equippedWeapon.OnValueChanged += EquipWeapon;
+		EquipWeapon(equippedWeapon.Value, equippedWeapon.Value);
 	}
 
 	public override void OnDestroy()
 	{
-		data.OnValueChanged -= UpdateVisuals;
+		equippedWeapon.OnValueChanged -= EquipWeapon;
 		base.OnDestroy();
 	}
 
-	private void UpdateVisuals(PlayerData oldData, PlayerData newData)
+	private void EquipWeapon(int oldWeapon, int newWeapon)
 	{
-		Material mat = meshRenderer.material;
-		mat.color = newData.color;
+		// TODO
 	}
-}
-
-public struct PlayerData : INetworkSerializeByMemcpy
-{
-	public Color color;
 }

@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actors:
     roots:
-    - {fileID: 3193457627028626546, guid: 01a21488dfd90a5428d4c74b53271d87, type: 3}
-    visuals:
-    - {fileID: 6080229622760787962, guid: 8c7a4bb73b26dcf4897c36cf2ebbab65, type: 3}
-    - {fileID: 6080229622760787962, guid: a3f9444e5cda06d4d91067a4e4fbc8c2, type: 3}
+    - {fileID: 2896338894900313020, guid: 2bbeaa2a8258c18488a244411dc9af46, type: 3}
+    visuals: []
