@@ -4952,6 +4952,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  hostButton:
+    hasValue: 1
+    value: 306
 --- !u!4 &1027582435
 Transform:
   m_ObjectHideFlags: 0

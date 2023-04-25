@@ -6,24 +6,34 @@ using UnityEngine;
 public class NetworkInitializer: MonoBehaviour
 {
 	[SerializeField] private BuildType type;
+	[SerializeField] private Optional<KeyCode> hostButton;
 
+	private bool hostButtonWasClicked;
+	
 	private IEnumerator Start()
 	{
 		while (NetworkManager.Singleton == null)
+			yield return null;
+
+		// Give one frame to check the button
+		if (hostButton.HasValue)
 			yield return null;
 
 		var mgr = NetworkManager.Singleton;
 		var ut = (UnityTransport) mgr.NetworkConfig.NetworkTransport;
 		ut.ConnectionData.Address = "127.0.0.1";
 		
-		if (type == BuildType.Host || (type == BuildType.HostIfBuild && !Application.isEditor))
+		if (hostButton.HasValue && hostButtonWasClicked
+			|| type == BuildType.Host
+			|| type == BuildType.HostIfBuild && !Application.isEditor)
 		{
 			if (!mgr.StartHost())
 			{
 				Debug.LogError("Failed to start host.");
 				yield break;
 			}
-			yield return new WaitForSeconds(2.0f);
+
+			yield return null;
 			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0 });
 		}
 		else
@@ -37,9 +47,17 @@ public class NetworkInitializer: MonoBehaviour
 			while (!mgr.IsConnectedClient)
 				yield return new WaitForSeconds(0.1f);
 
-			yield return new WaitForSeconds(2.0f);
+			yield return null;
 			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0 });
 		}
+
+		enabled = false;
+	}
+
+	private void Update()
+	{
+		if (!hostButtonWasClicked && hostButton.TryGet(out KeyCode button))
+			hostButtonWasClicked = Input.GetKey(button);
 	}
 }
 
