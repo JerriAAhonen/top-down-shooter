@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private LineRenderer aimLine;
 	[SerializeField] private CameraController playerCamera;
 	[Header("Shooting")]
+	[SerializeField] private Weapon currentWeapon;
 	[SerializeField] private float shootingInterval;
 	[SerializeField] private Transform shootPoint;
 	[SerializeField] private ParticleSystem projectilePS;
@@ -35,7 +36,8 @@ public class PlayerController : MonoBehaviour
 
 	private void Start()
 	{
-		InputManager.Instance.Shoot += OnShoot;
+		InputManager.Instance.Shoot += OnShootPressed;
+		InputManager.Instance.Reload += OnReloadPressed;
 	}
 
 	private void Update()
@@ -78,27 +80,22 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private float timeSinceLastShot;
-	private bool currentlyShooting;
+	private bool shootPressed;
 
-	private void OnShoot(bool shooting)
+	private void OnShootPressed(bool shootPressed)
 	{
-		currentlyShooting = shooting;
+		this.shootPressed = shootPressed;
+	}
+
+	private void OnReloadPressed()
+	{
+		currentWeapon.OnReload();
 	}
 
 	private void PlayerShooting()
 	{
-		timeSinceLastShot += Time.deltaTime;
+		currentWeapon.OnShoot(shootPressed, Shoot);
 
-		if (!currentlyShooting)
-			return;
-
-		if (timeSinceLastShot > shootingInterval)
-		{
-			Shoot();
-			timeSinceLastShot = 0f;
-		}
-		
 		void Shoot()
 		{
 			// Raycast for htis

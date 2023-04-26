@@ -61,5 +61,11 @@ public class ParticleSystemProjectile : MonoBehaviour
 				Quaternion.LookRotation(Vector3.Reflect(e.velocity, e.normal)));
 			ps.Play();
 		}
+
+		if (other.CompareTag("Clutter"))
+		{
+			var rb = other.GetComponent<Rigidbody>();
+			rb.AddForce(events[0].velocity, ForceMode.Impulse);
+		}
 	}
 }
