@@ -100,12 +100,12 @@ public class PlayerController : NetworkBehaviour
 
 	private void OnReloadPressed()
 	{
-		currentWeapon.OnReload();
+		currentWeapon?.OnReload();
 	}
 
 	private void PlayerShooting()
 	{
-		currentWeapon.OnShoot(shootPressed, Shoot);
+		currentWeapon?.OnShoot(shootPressed, Shoot);
 
 		void Shoot()
 		{

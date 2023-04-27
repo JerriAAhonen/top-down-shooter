@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class SyncedPrefabDb : ScriptableObject
 {
+	[SerializeField] private GameObject[] systems;
 	[SerializeField] private Actors actors;
+
+	public IReadOnlyList<GameObject> Systems => systems;
 	
 	public void GetActorPrefabs(PlayerSpawnData data, out GameObject actorPrefab)
 	{
@@ -23,6 +26,7 @@ public class SyncedPrefabDb : ScriptableObject
 	private void OnValidate()
 	{
 		var all = new List<GameObject>();
+		all.AddRange(systems);
 		all.AddRange(actors.roots);
 		all.AddRange(actors.visuals);
 		all.RemoveAll(Is.Null);

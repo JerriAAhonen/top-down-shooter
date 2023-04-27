@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff39d647014a3f40a097366b08ed04e, type: 3}
   m_Name: SyncedPrefabs
   m_EditorClassIdentifier: 
+  systems:
+  - {fileID: 3124696158893489898, guid: e76d714be4188f14b8141b37c7669e3c, type: 3}
   actors:
     roots:
-    - {fileID: 2896338894900313020, guid: 2bbeaa2a8258c18488a244411dc9af46, type: 3}
+    - {fileID: 5112158055791614097, guid: 20cef2d8dc8f4464ca1876e4a2bdc755, type: 3}
     visuals: []

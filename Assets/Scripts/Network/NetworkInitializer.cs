@@ -3,10 +3,11 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
-public class NetworkInitializer: MonoBehaviour
+public class NetworkInitializer : MonoBehaviour
 {
 	[SerializeField] private BuildType type;
 	[SerializeField] private Optional<KeyCode> hostButton;
+	[SerializeField] private SyncedPrefabDb prefabs;
 
 	private bool hostButtonWasClicked;
 	
@@ -34,6 +35,14 @@ public class NetworkInitializer: MonoBehaviour
 			}
 
 			yield return null;
+
+			foreach (var p in prefabs.Systems)
+			{
+				var go = Instantiate(p);
+				DontDestroyOnLoad(go);
+				go.GetComponent<NetworkObject>().Spawn();
+			}
+
 			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0 });
 		}
 		else
