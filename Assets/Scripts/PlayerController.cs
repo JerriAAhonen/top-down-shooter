@@ -61,6 +61,15 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
+	public override void OnNetworkSpawn()
+	{
+		if (NetworkObject.IsOwner)
+		{
+			InputManager.Instance.Shoot += shooting.OnShootPressed;
+			InputManager.Instance.Reload += shooting.OnReloadPressed;
+		}
+	}
+
 	private void PlayerMovement()
 	{
 		var movementInput = InputManager.Instance.MovementInput;

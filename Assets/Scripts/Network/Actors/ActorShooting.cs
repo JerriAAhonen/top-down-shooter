@@ -1,4 +1,3 @@
-using tds.Input;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,13 +13,14 @@ public class ActorShooting : NetworkBehaviour
 
 	private bool shootPressed;
 
-	public override void OnNetworkSpawn()
+	public void OnShootPressed(bool pressed)
 	{
-		if (NetworkObject.IsOwner)
-		{
-			InputManager.Instance.Shoot += OnShootPressed;
-			InputManager.Instance.Reload += OnReloadPressed;
-		}
+		shootPressed = pressed;
+	}
+
+	public void OnReloadPressed()
+	{
+		currentWeapon?.OnReload();
 	}
 
 	public void Process()
@@ -38,16 +38,6 @@ public class ActorShooting : NetworkBehaviour
 
 			Shoot_ServerRpc(from, direction);
 		}
-	}
-
-	private void OnShootPressed(bool shootPressed)
-	{
-		this.shootPressed = shootPressed;
-	}
-
-	private void OnReloadPressed()
-	{
-		currentWeapon?.OnReload();
 	}
 
 	private void ExecuteShot(Vector3 from, Vector3 direction)
