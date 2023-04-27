@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using tds.Input;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Pool;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
 	[SerializeField] private float movementSpeed;
 	[SerializeField] private float rotationSpeed;
@@ -32,16 +30,29 @@ public class PlayerController : MonoBehaviour
 		cc = GetComponent<CharacterController>();
 		cam = Camera.main;
 		mousePosPlane = new Plane(Vector3.up, Vector3.zero);
+		
+		// TODO hackerino
+		if (!playerCamera)
+		{
+			playerCamera = FindFirstObjectByType<CameraController>();
+			playerCamera.SetPlayerTransform(transform);
+		}
 	}
 
-	private void Start()
+	public override void OnNetworkSpawn()
 	{
-		InputManager.Instance.Shoot += OnShootPressed;
-		InputManager.Instance.Reload += OnReloadPressed;
+		if (NetworkObject.IsOwner)
+		{
+			InputManager.Instance.Shoot += OnShootPressed;
+			InputManager.Instance.Reload += OnReloadPressed;
+		}
 	}
 
 	private void Update()
 	{
+		if (!NetworkObject.IsOwner)
+			return;
+		
 		PlayerMovement();
 		PlayerRotation();
 		PlayerShooting();

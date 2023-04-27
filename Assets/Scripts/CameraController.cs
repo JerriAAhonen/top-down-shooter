@@ -16,6 +16,11 @@ public class CameraController : MonoBehaviour
 		transform.position = Vector3.Slerp(transform.position, targetPos, Time.deltaTime * movementSpeed);
 	}
 
+	public void SetPlayerTransform(Transform player)
+	{
+		this.player = player;
+	}
+
 	public void SetMousePos(Vector3 mousePos)
 	{
 		var midPoint = (player.position + mousePos) / 2f;
