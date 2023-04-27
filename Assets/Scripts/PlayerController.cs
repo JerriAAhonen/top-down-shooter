@@ -6,20 +6,17 @@ public class PlayerController : NetworkBehaviour
 {
 	[SerializeField] private float movementSpeed;
 	[SerializeField] private float rotationSpeed;
-	[Header("Aim")]
+	[Header("Aiming and shooting")]
 	[SerializeField] private LineRenderer aimLine;
-	[SerializeField] private CameraController playerCamera;
-	[Header("Shooting")]
-	[SerializeField] private Weapon currentWeapon;
-	[SerializeField] private float shootingInterval;
 	[SerializeField] private Transform shootPoint;
-	[SerializeField] private ParticleSystem projectilePS;
-	[SerializeField] private ParticleSystem casingPS;
-	[SerializeField] private ParticleSystem muzzleFlashPS;
-	[SerializeField] private ParticleSystem muzzleSmokePS;
+	[SerializeField] private ActorShooting shooting;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
 
+	private readonly NetworkVariable<float> animatorX = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+	private readonly NetworkVariable<float> animatorZ = new(0f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+	private CameraController playerCamera;
 	private Rigidbody rb;
 	private Vector3 velocity;
 	private Camera cam;
@@ -39,15 +36,6 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
-	public override void OnNetworkSpawn()
-	{
-		if (NetworkObject.IsOwner)
-		{
-			InputManager.Instance.Shoot += OnShootPressed;
-			InputManager.Instance.Reload += OnReloadPressed;
-		}
-	}
-
 	private void FixedUpdate()
 	{
 		if (!NetworkObject.IsOwner)
@@ -55,8 +43,22 @@ public class PlayerController : NetworkBehaviour
 		
 		PlayerMovement();
 		PlayerRotation();
-		PlayerShooting();
+		shooting.Process();
 		PlayerAnimations();
+	}
+
+	private void LateUpdate()
+	{
+		if (NetworkObject.IsOwner)
+		{
+			animatorX.Value = animator.GetFloat("X");
+			animatorZ.Value = animator.GetFloat("Z");
+		}
+		else
+		{
+			animator.SetFloat("X", animatorX.Value);
+			animator.SetFloat("Z", animatorZ.Value);
+		}
 	}
 
 	private void PlayerMovement()
@@ -92,35 +94,6 @@ public class PlayerController : NetworkBehaviour
 		}
 	}
 
-	private bool shootPressed;
-
-	private void OnShootPressed(bool shootPressed)
-	{
-		this.shootPressed = shootPressed;
-	}
-
-	private void OnReloadPressed()
-	{
-		currentWeapon?.OnReload();
-	}
-
-	private void PlayerShooting()
-	{
-		currentWeapon?.OnShoot(shootPressed, OnShot);
-
-		void OnShot()
-		{
-			Vector3 from = shootPoint.position;
-			Vector3 direction = transform.forward;
-
-			// Only execute the shot here for clients, since host's execution happens later.
-			if (!NetworkObject.IsOwnedByServer)
-				ExecuteShot(from, direction);
-
-			Shoot_ServerRpc(from, direction);
-		}
-	}
-
 	private void PlayerAnimations()
 	{
 		var localVelocity = transform.InverseTransformDirection(velocity);
@@ -130,37 +103,4 @@ public class PlayerController : NetworkBehaviour
 		animator.SetFloat("X", localVelocity.x);
 		animator.SetFloat("Z", localVelocity.z);
 	}
-
-	private void ExecuteShot(Vector3 from, Vector3 direction)
-	{
-		projectilePS.Play();
-		casingPS.Play();
-		muzzleFlashPS.Play();
-		muzzleSmokePS.Play();
-	}
-
-	#region RPC
-
-	[ServerRpc(RequireOwnership = true)]
-	private void Shoot_ServerRpc(Vector3 from, Vector3 direction, ServerRpcParams serverRpcParams = default)
-	{
-		ExecuteShot(from, direction);
-		Shoot_ClientRpc(from, direction);
-
-		var ray = new Ray(from, direction);
-		if (Physics.Raycast(ray, out var hit, 100f))
-		{
-			// TODO: Deal damage
-		}
-	}
-
-	[ClientRpc]
-	private void Shoot_ClientRpc(Vector3 from, Vector3 direction)
-	{
-		// Execute shot only if not owned (owner's execution happens instantly when shooting)
-		if (!NetworkObject.IsOwner)
-			ExecuteShot(from, direction);
-	}
-
-	#endregion
 }

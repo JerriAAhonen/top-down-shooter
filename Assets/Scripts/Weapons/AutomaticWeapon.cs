@@ -10,10 +10,10 @@ public class AutomaticWeapon : Weapon
 
 	private float elapsedSinceLastShot;
 
-	public override void OnShoot(bool shootPressed, Action onShot)
+	public override void OnShoot(bool shootPressed, float dt, Action onShot)
 	{
 		float interval = timeBetweenShots;
-		elapsedSinceLastShot += Time.deltaTime;
+		elapsedSinceLastShot += dt;
 
 		if (shootPressed && elapsedSinceLastShot >= interval)
 		{

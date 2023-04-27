@@ -37,7 +37,7 @@ public abstract class Weapon : MonoBehaviour
 		roundsInMagazine = magazineCapacity;
 	}
 
-	public abstract void OnShoot(bool shootPressed, Action onShot);
+	public abstract void OnShoot(bool shootPressed, float dt, Action onShot);
 
 	public virtual void OnReload()
 	{
