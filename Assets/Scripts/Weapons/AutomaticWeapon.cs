@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AutomaticWeapon : Weapon
@@ -14,30 +12,19 @@ public class AutomaticWeapon : Weapon
 
 	public override void OnShoot(bool shootPressed, Action onShot)
 	{
-		if (elapsedSinceLastShot < timeBetweenShots)
-		{
-			elapsedSinceLastShot += Time.deltaTime;
-			return;
-		}
+		float interval = timeBetweenShots;
+		elapsedSinceLastShot += Time.deltaTime;
 
-		if (roundsInMagazine <= 0)
+		if (shootPressed && elapsedSinceLastShot >= interval)
 		{
-			// Play empty magazine audio clip
-			return;
-		}
+			// Preserve the overflow in order to keep a steady firerate
+			elapsedSinceLastShot -= interval;
 
-		if (!shootPressed)
-		{
-			return;
+			if (roundsInMagazine > 0)
+			{
+				roundsInMagazine--;
+				onShot?.Invoke();
+			}
 		}
-
-		roundsInMagazine--;
-		if (roundsInMagazine <= 0)
-		{
-			Debug.LogWarning("Empty magazine");
-		}
-
-		elapsedSinceLastShot = 0f;
-		onShot?.Invoke();
 	}
 }

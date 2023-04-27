@@ -106,21 +106,18 @@ public class PlayerController : NetworkBehaviour
 
 	private void PlayerShooting()
 	{
-		currentWeapon?.OnShoot(shootPressed, Shoot);
+		currentWeapon?.OnShoot(shootPressed, OnShot);
 
-		void Shoot()
+		void OnShot()
 		{
-			// Raycast for htis
-			var ray = new Ray(shootPoint.position, transform.forward);
-			if (Physics.Raycast(ray, out var hit, 100f))
-			{
-				//Debug.Log($"Hit: {hit.collider.name}", hit.collider);
-			}
+			Vector3 from = shootPoint.position;
+			Vector3 direction = transform.forward;
 
-			projectilePS.Play();
-			casingPS.Play();
-			muzzleFlashPS.Play();
-			muzzleSmokePS.Play();
+			// Only execute the shot here for clients, since host's execution happens later.
+			if (!NetworkObject.IsOwnedByServer)
+				ExecuteShot(from, direction);
+
+			Shoot_ServerRpc(from, direction);
 		}
 	}
 
@@ -133,4 +130,37 @@ public class PlayerController : NetworkBehaviour
 		animator.SetFloat("X", localVelocity.x);
 		animator.SetFloat("Z", localVelocity.z);
 	}
+
+	private void ExecuteShot(Vector3 from, Vector3 direction)
+	{
+		projectilePS.Play();
+		casingPS.Play();
+		muzzleFlashPS.Play();
+		muzzleSmokePS.Play();
+	}
+
+	#region RPC
+
+	[ServerRpc(RequireOwnership = true)]
+	private void Shoot_ServerRpc(Vector3 from, Vector3 direction, ServerRpcParams serverRpcParams = default)
+	{
+		ExecuteShot(from, direction);
+		Shoot_ClientRpc(from, direction);
+
+		var ray = new Ray(from, direction);
+		if (Physics.Raycast(ray, out var hit, 100f))
+		{
+			// TODO: Deal damage
+		}
+	}
+
+	[ClientRpc]
+	private void Shoot_ClientRpc(Vector3 from, Vector3 direction)
+	{
+		// Execute shot only if not owned (owner's execution happens instantly when shooting)
+		if (!NetworkObject.IsOwner)
+			ExecuteShot(from, direction);
+	}
+
+	#endregion
 }
