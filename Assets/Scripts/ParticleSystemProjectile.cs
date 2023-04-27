@@ -6,6 +6,7 @@ using UnityEngine.Pool;
 public class ParticleSystemProjectile : MonoBehaviour
 {
 	[SerializeField] private ParticleSystem impactPS;
+	[SerializeField] private LayerMask clutterMask;
 
 	private ParticleSystem ps;
 	private readonly List<ParticleCollisionEvent> events = new();
@@ -62,7 +63,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 			ps.Play();
 		}
 
-		if (other.CompareTag("Clutter"))
+		if (other.layer == clutterMask)
 		{
 			var rb = other.GetComponent<Rigidbody>();
 			rb.AddForce(events[0].velocity, ForceMode.Impulse);

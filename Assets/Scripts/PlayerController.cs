@@ -22,14 +22,14 @@ public class PlayerController : MonoBehaviour
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
 
-	private CharacterController cc;
+	private Rigidbody rb;
 	private Vector3 velocity;
 	private Camera cam;
 	private Plane mousePosPlane;
 
 	private void Awake()
 	{
-		cc = GetComponent<CharacterController>();
+		rb = GetComponent<Rigidbody>();
 		cam = Camera.main;
 		mousePosPlane = new Plane(Vector3.up, Vector3.zero);
 	}
@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
 		InputManager.Instance.Reload += OnReloadPressed;
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
 		PlayerMovement();
 		PlayerRotation();
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
 		var movementInput = InputManager.Instance.MovementInput;
 		var movement = new Vector3(movementInput.x, 0f, movementInput.y).normalized;
 		velocity = movementSpeed * Time.deltaTime * movement;
-		cc.Move(velocity);
+		rb.AddForce(velocity, ForceMode.VelocityChange);
 	}
 
 	private void PlayerRotation()
@@ -68,8 +68,9 @@ public class PlayerController : MonoBehaviour
 			var relativeRotationPos = shootPoint.position;
 			relativeRotationPos.y = 0f;
 
+			// TODO: If the aim pos is between the player and the shootpoint, this breaks
 			var rotation = Quaternion.LookRotation(target - relativeRotationPos);
-			transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+			rb.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
 			playerCamera.SetMousePos(target);
 

@@ -1,18 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using tds.Input;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CursorController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	[SerializeField] private LayerMask clutterMask;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	private Outline currentOutline;
+
+	private void Update()
+	{
+		var ray = Camera.main.ScreenPointToRay(InputManager.Instance.MousePosition);
+		if (Physics.Raycast(ray, out var hit, Mathf.Infinity, clutterMask))
+		{
+			var outline = hit.collider.GetComponent<Outline>();
+			if (outline != null && outline != currentOutline)
+			{
+				outline.enabled = true;
+				currentOutline = outline;
+			}
+		}
+		else if (currentOutline != null)
+		{
+			currentOutline.enabled = false;
+			currentOutline = null;
+		}
+	}
 }

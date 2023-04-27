@@ -48,6 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   impactPS: {fileID: 4982065707525617736, guid: d19fde6ad6f2d184cbe2b32716eb5b17,
     type: 3}
+  clutterMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!199 &3322205551020419320
 ParticleSystemRenderer:
   serializedVersion: 6
