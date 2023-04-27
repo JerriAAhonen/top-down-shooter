@@ -4,7 +4,6 @@ using UnityEngine;
 public class ActorShooting : NetworkBehaviour
 {
 	[SerializeField] private Weapon currentWeapon;
-	[SerializeField] private float shootingInterval;
 	[SerializeField] private Transform shootPoint;
 	[SerializeField] private ParticleSystem projectilePS;
 	[SerializeField] private ParticleSystem casingPS;
