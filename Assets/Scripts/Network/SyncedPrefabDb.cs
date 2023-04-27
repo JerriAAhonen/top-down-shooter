@@ -6,29 +6,20 @@ using UnityEngine;
 public class SyncedPrefabDb : ScriptableObject
 {
 	[SerializeField] private GameObject[] systems;
-	[SerializeField] private Actors actors;
+	[SerializeField] private GameObject[] players;
+	[SerializeField] private GameObject[] enemies;
 
 	public IReadOnlyList<GameObject> Systems => systems;
-	
-	public void GetActorPrefabs(PlayerSpawnData data, out GameObject actorPrefab)
-	{
-		actorPrefab = actors.roots[data.rootPrefab];
-	}
+	public GameObject GetPlayer(PlayerSpawnData data) => players[data.prefab];
+	public GameObject GetEnemy(EnemySpawnData data) => enemies[data.prefab];
 
-	[Serializable]
-	public class Actors
-	{
-		public GameObject[] roots;
-		public GameObject[] visuals;
-	}
-	
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
 		var all = new List<GameObject>();
 		all.AddRange(systems);
-		all.AddRange(actors.roots);
-		all.AddRange(actors.visuals);
+		all.AddRange(players);
+		all.AddRange(enemies);
 		all.RemoveAll(Is.Null);
 		all.RemoveDuplicates();
 

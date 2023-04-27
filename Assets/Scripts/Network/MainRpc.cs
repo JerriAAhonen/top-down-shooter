@@ -7,7 +7,7 @@ public class MainRpc : NetworkBehaviour
 	public static MainRpc Instance { get; private set; }
 
 	[SerializeField] private SyncedPrefabDb prefabs;
-	
+
 	private void Awake()
 	{
 		Instance = this;
@@ -23,28 +23,28 @@ public class MainRpc : NetworkBehaviour
 	[ServerRpc(RequireOwnership = false)]
 	public void SpawnMe_ServerRpc(PlayerSpawnData data, ServerRpcParams serverRpcParams = default)
 	{
-		SpawnPlayer(serverRpcParams.Receive.SenderClientId, data);
+		var go = Instantiate(prefabs.GetPlayer(data));
+		var no = go.GetComponent<NetworkObject>();
+		no.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
 	}
 
-	private void SpawnPlayer(ulong id, PlayerSpawnData data)
+	public void SpawnEnemy(EnemySpawner spawner)
 	{
 		NetworkUtil.Assert.IsHost();
-		
-		prefabs.GetActorPrefabs(data, out GameObject actorPrefab);
-		
-		var go = Instantiate(actorPrefab);
-		
-		// TODO hackerino
-		var player = go.GetComponent<PlayerController>();
-		var field = player.GetType().GetField("playerCamera", BindingFlags.Instance | BindingFlags.NonPublic);
-		field.SetValue(player, FindFirstObjectByType<CameraController>());
-		
+
+		var data = new EnemySpawnData { prefab = 0 };
+		var go = Instantiate(prefabs.GetEnemy(data), spawner.transform.position, spawner.transform.rotation);
 		var no = go.GetComponent<NetworkObject>();
-		no.SpawnWithOwnership(id);
+		no.Spawn();
 	}
 }
 
 public struct PlayerSpawnData : INetworkSerializeByMemcpy
 {
-	public int rootPrefab;
+	public int prefab;
+}
+
+public struct EnemySpawnData : INetworkSerializeByMemcpy
+{
+	public int prefab;
 }

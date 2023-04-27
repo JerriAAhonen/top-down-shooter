@@ -43,7 +43,7 @@ public class NetworkInitializer : MonoBehaviour
 				go.GetComponent<NetworkObject>().Spawn();
 			}
 
-			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0 });
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { prefab = 0 });
 		}
 		else
 		{
@@ -57,7 +57,7 @@ public class NetworkInitializer : MonoBehaviour
 				yield return new WaitForSeconds(0.1f);
 
 			yield return null;
-			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { rootPrefab = 0 });
+			MainRpc.Instance.SpawnMe_ServerRpc(new PlayerSpawnData { prefab = 0 });
 		}
 
 		enabled = false;
