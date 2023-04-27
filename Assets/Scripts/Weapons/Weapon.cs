@@ -26,6 +26,7 @@ public abstract class Weapon : MonoBehaviour
 	[SerializeField] private int magazineCapacity;
 	[SerializeField] private float reloadTime;
 
+	protected int totalAmmo;
 	protected int roundsInMagazine;
 	protected bool currentlyReloading;
 
@@ -35,9 +36,14 @@ public abstract class Weapon : MonoBehaviour
 	private void Start()
 	{
 		roundsInMagazine = magazineCapacity;
+		totalAmmo = 200;
+		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 	}
 
-	public abstract void OnShoot(bool shootPressed, float dt, Action onShot);
+	public virtual void OnShoot(bool shootPressed, float dt, Action onShot)
+	{
+		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
+	}
 
 	public virtual void OnReload()
 	{
@@ -46,10 +52,15 @@ public abstract class Weapon : MonoBehaviour
 
 	protected virtual IEnumerator DoReload()
 	{
+		CoreUI.Instance.ShowReload(true, reloadTime);
+
 		currentlyReloading = true;
 		yield return new WaitForSeconds(reloadTime);
 		currentlyReloading = false;
 
 		roundsInMagazine = magazineCapacity;
+		totalAmmo -= roundsInMagazine;
+
+		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 	}
 }

@@ -24,6 +24,7 @@ public class AutomaticWeapon : Weapon
 			{
 				roundsInMagazine--;
 				onShot?.Invoke();
+				base.OnShoot(shootPressed, dt, onShot);
 			}
 		}
 	}

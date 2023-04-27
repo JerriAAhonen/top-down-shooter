@@ -6,9 +6,16 @@ using UnityEngine.UI;
 
 public class CursorController : MonoBehaviour
 {
+	[Header("Cursor")]
+	[SerializeField] private Texture2D defaultCursor;
 	[SerializeField] private LayerMask clutterMask;
 
 	private Outline currentOutline;
+
+	private void Start()
+	{
+		Cursor.SetCursor(defaultCursor, new Vector2(256, 256), CursorMode.Auto);
+	}
 
 	private void Update()
 	{
