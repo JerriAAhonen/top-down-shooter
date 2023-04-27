@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10a5acb189ccbc841bc0c09cbb9f18cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 1
+  type: 2
   hostButton:
     hasValue: 1
     value: 306
