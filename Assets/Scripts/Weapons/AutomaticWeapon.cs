@@ -6,7 +6,7 @@ public class AutomaticWeapon : Weapon
 	[Tooltip("Rounds per minute")]
 	[SerializeField] private float fireRate;
 
-	private float timeBetweenShots => 1f / fireRate / 60f;
+	private float timeBetweenShots => 60f / fireRate;
 
 	private float elapsedSinceLastShot;
 
@@ -15,17 +15,12 @@ public class AutomaticWeapon : Weapon
 		float interval = timeBetweenShots;
 		elapsedSinceLastShot += dt;
 
-		if (shootPressed && elapsedSinceLastShot >= interval)
+		if (shootPressed && elapsedSinceLastShot >= interval && roundsInMagazine > 0)
 		{
-			// Preserve the overflow in order to keep a steady firerate
-			elapsedSinceLastShot -= interval;
-
-			if (roundsInMagazine > 0)
-			{
-				roundsInMagazine--;
-				onShot?.Invoke();
-				base.OnShoot(shootPressed, dt, onShot);
-			}
+			roundsInMagazine--;
+			elapsedSinceLastShot = 0f;
+			onShot?.Invoke();
+			base.OnShoot(shootPressed, dt, onShot);
 		}
 	}
 }

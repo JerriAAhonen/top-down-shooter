@@ -51,7 +51,7 @@ MonoBehaviour:
   rearGripRef: {fileID: 0}
   magazineCapacity: 24
   reloadTime: 2
-  fireRate: 100
+  fireRate: 200
 --- !u!1001 &8402086981495269059
 PrefabInstance:
   m_ObjectHideFlags: 0
