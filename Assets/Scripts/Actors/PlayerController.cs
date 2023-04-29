@@ -2,53 +2,38 @@ using tds.Input;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerController : NetworkBehaviour
+public class PlayerController : ActorController
 {
-	[SerializeField] private float movementSpeed;
-	[SerializeField] private float rotationSpeed;
-	[Header("Aiming and shooting")]
-	[SerializeField] private LineRenderer aimLine;
-	[SerializeField] private Transform shootPoint;
-	[SerializeField] private ActorShooting shooting;
-	[Header("Animations")]
-	[SerializeField] private Animator animator;
-
-	private CameraController playerCamera;
-	private Rigidbody rb;
-	private Vector3 velocity;
-
-	public Transform ShootPoint => shootPoint;
-
-	private void Awake()
+	protected override void FixedUpdate()
 	{
-		rb = GetComponent<Rigidbody>();
-		
-		// TODO hackerino
-		if (!playerCamera)
-		{
-			playerCamera = FindFirstObjectByType<CameraController>();
-			playerCamera.SetPlayerTransform(transform);
-		}
-	}
+		base.FixedUpdate();
 
-	private void FixedUpdate()
-	{
 		if (!NetworkObject.IsOwner)
 			return;
 		
 		PlayerMovement();
 		PlayerRotation();
 		shooting.Process();
-		PlayerAnimations();
 	}
 
 	public override void OnNetworkSpawn()
 	{
+		MainRpc.Instance.RegisterPlayer(this);
+
 		if (NetworkObject.IsOwner)
 		{
+			CameraController.Instance.Init(transform);
+			FieldOfViewController.Instance.SetTarget(transform);
+
 			InputManager.Instance.Shoot += shooting.OnShootPressed;
 			InputManager.Instance.Reload += shooting.OnReloadPressed;
 		}
+	}
+
+	public override void OnDestroy()
+	{
+		MainRpc.Instance?.UnregisterPlayer(this);
+		base.OnDestroy();
 	}
 
 	private void PlayerMovement()
@@ -75,7 +60,7 @@ public class PlayerController : NetworkBehaviour
 		var rotation = Quaternion.LookRotation(target - relativeRotationPos);
 		rb.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
-		playerCamera.SetMousePos(target);
+		CameraController.Instance.SetMousePos(target);
 
 		// Aiming line renderer
 		var aimLineTargetX = 0f;
@@ -84,15 +69,5 @@ public class PlayerController : NetworkBehaviour
 
 		var aimLineTarget = new Vector3(aimLineTargetX, aimLineTargetY, aimLineTargetZ);
 		aimLine.SetPosition(1, aimLineTarget);
-	}
-
-	private void PlayerAnimations()
-	{
-		var localVelocity = transform.InverseTransformDirection(velocity);
-		localVelocity /= Time.deltaTime * movementSpeed;
-		localVelocity = localVelocity.Clamp(-1f, 1f);
-
-		animator.SetFloat("X", localVelocity.x);
-		animator.SetFloat("Z", localVelocity.z);
 	}
 }
