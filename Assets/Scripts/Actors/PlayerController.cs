@@ -16,14 +16,12 @@ public class PlayerController : NetworkBehaviour
 	private CameraController playerCamera;
 	private Rigidbody rb;
 	private Vector3 velocity;
-	private Camera cam;
-	private Plane mousePosPlane;
+
+	public Transform ShootPoint => shootPoint;
 
 	private void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
-		cam = Camera.main;
-		mousePosPlane = new Plane(Vector3.up, Vector3.zero);
 		
 		// TODO hackerino
 		if (!playerCamera)
@@ -63,27 +61,29 @@ public class PlayerController : NetworkBehaviour
 
 	private void PlayerRotation()
 	{
-		var ray = cam.ScreenPointToRay(InputManager.Instance.MousePosition);
-		if (mousePosPlane.Raycast(ray, out var intersectionDist))
-		{
-			var point = ray.GetPoint(intersectionDist);
-			var target = new Vector3(point.x, transform.position.y, point.z);
+		if (!CursorController.Instance.IsReady)
+			return;
 
-			// Since the shootpoint is offset to the side, get the rotation from the shootpoint to the traget
-			var relativeRotationPos = shootPoint.position;
-			relativeRotationPos.y = 0f;
+		var aimPoint = CursorController.Instance.AimPoint;
+		var target = aimPoint.SetY(transform.position.y);
 
-			// TODO: If the aim pos is between the player and the shootpoint, this breaks
-			var rotation = Quaternion.LookRotation(target - relativeRotationPos);
-			rb.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
+		// Since the shootpoint is offset to the side, get the rotation from the shootpoint to the traget
+		var relativeRotationPos = shootPoint.position;
+		relativeRotationPos.y = 0f;
 
-			playerCamera.SetMousePos(target);
+		// TODO: If the aim pos is between the player and the shootpoint, this breaks
+		var rotation = Quaternion.LookRotation(target - relativeRotationPos);
+		rb.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
-			// Aiming line renderer
-			var aimLineHeight = aimLine.GetPosition(0).y;
-			var aimLineTarget = new Vector3(0f, aimLineHeight, Vector3.Distance(target, shootPoint.position));
-			aimLine.SetPosition(1, aimLineTarget);
-		}
+		playerCamera.SetMousePos(target);
+
+		// Aiming line renderer
+		var aimLineTargetX = 0f;
+		var aimLineTargetY = aimPoint.y - shootPoint.position.y;
+		var aimLineTargetZ = Vector3.Distance(target, shootPoint.position);
+
+		var aimLineTarget = new Vector3(aimLineTargetX, aimLineTargetY, aimLineTargetZ);
+		aimLine.SetPosition(1, aimLineTarget);
 	}
 
 	private void PlayerAnimations()

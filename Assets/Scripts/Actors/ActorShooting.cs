@@ -29,7 +29,8 @@ public class ActorShooting : NetworkBehaviour
 		void OnShot()
 		{
 			Vector3 from = shootPoint.position;
-			Vector3 direction = transform.forward;
+			Vector3 to = CursorController.Instance.AimPoint;
+			Vector3 direction = to - from;
 
 			// Only execute the shot here for clients, since host's execution happens later.
 			if (!NetworkObject.IsOwnedByServer)

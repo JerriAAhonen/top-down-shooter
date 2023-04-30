@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using Unity.Netcode;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class MainRpc : NetworkBehaviour
 	public static MainRpc Instance { get; private set; }
 
 	[SerializeField] private SyncedPrefabDb prefabs;
+
+	public List<PlayerController> Players { get; private set; } = new();
 
 	private void Awake()
 	{
@@ -26,6 +29,8 @@ public class MainRpc : NetworkBehaviour
 		var go = Instantiate(prefabs.GetPlayer(data));
 		var no = go.GetComponent<NetworkObject>();
 		no.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
+
+		Players.Add(go.GetComponent<PlayerController>());
 	}
 
 	public void SpawnEnemy(EnemySpawner spawner)
