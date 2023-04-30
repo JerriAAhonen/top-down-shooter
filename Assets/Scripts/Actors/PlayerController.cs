@@ -79,7 +79,7 @@ public class PlayerController : NetworkBehaviour
 
 		// Aiming line renderer
 		var aimLineTargetX = 0f;
-		var aimLineTargetY = aimPoint.y - shootPoint.position.y;
+		var aimLineTargetY = aimLine.GetPosition(0).y;
 		var aimLineTargetZ = Vector3.Distance(target, shootPoint.position);
 
 		var aimLineTarget = new Vector3(aimLineTargetX, aimLineTargetY, aimLineTargetZ);

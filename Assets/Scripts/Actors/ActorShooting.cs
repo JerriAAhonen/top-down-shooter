@@ -12,6 +12,17 @@ public class ActorShooting : NetworkBehaviour
 
 	private bool shootPressed;
 
+	private void Update()
+	{
+		if (!NetworkObject.IsLocalPlayer)
+			return;
+
+		Vector3 from = shootPoint.position;
+		Vector3 to = CursorController.Instance.AimPoint;
+		Vector3 direction = to - from;
+		shootPoint.rotation = Quaternion.LookRotation(direction);
+	}
+
 	public void OnShootPressed(bool pressed)
 	{
 		shootPressed = pressed;
