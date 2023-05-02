@@ -9,12 +9,6 @@ public enum WeaponID
 	Shotgun = 1
 }
 
-/*
- * Update loop -> OnShoot(bool pressed)
- * 
- * 
- */
-
 public abstract class Weapon : MonoBehaviour
 {
 	[SerializeField] private WeaponID weaponID;
@@ -33,16 +27,24 @@ public abstract class Weapon : MonoBehaviour
 	public Transform FrontGripRef => frontGripRef;
 	public Transform RearGripRef => rearGripRef;
 
-	private void Start()
+	protected virtual void Start()
 	{
 		roundsInMagazine = magazineCapacity;
 		totalAmmo = 200;
 		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 	}
 
+	/// <summary>
+	/// Call base.OnShoot() when the shot was executed
+	/// </summary>
+	/// <param name="shootPressed"></param>
+	/// <param name="dt"></param>
+	/// <param name="onShot">Did shoot</param>
 	public virtual void OnShoot(bool shootPressed, float dt, Action onShot)
 	{
 		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
+		roundsInMagazine--;
+		onShot?.Invoke();
 	}
 
 	public virtual void OnReload()

@@ -23,7 +23,7 @@ namespace tds.Input
 		public event Action<bool> LeanRight;
 		public event Action<bool> LeanLeft;
 		public event Action Reload;
-		public event Action SwitchWeapon;
+		public event Action<float> SwitchWeapon;
 
 		protected override void Awake()
 		{
@@ -69,27 +69,22 @@ namespace tds.Input
 			pia.Player.Reload.performed += OnReloadPerformed;
 			pia.Player.Reload.Enable();
 
-			pia.Player.PrimaryWeapon.performed += OnPrimaryWeaponPerformed;
-			pia.Player.PrimaryWeapon.Enable();
-
-			pia.Player.SecondaryWeapon.performed += OnSecondaryWeaponPerformed;
-			pia.Player.SecondaryWeapon.Enable();
+			pia.Player.SwitchWeapon.performed += OnSwitchWeaponPerformed;
+			pia.Player.SwitchWeapon.Enable();
 
 			removeListeners = RemoveListeners;
 			
 			void OnShootPerformed(InputAction.CallbackContext _) => Shoot?.Invoke(true);
 			void OnShootCancelled(InputAction.CallbackContext _) => Shoot?.Invoke(false);
 			void OnReloadPerformed(InputAction.CallbackContext _) => Reload?.Invoke();
-			void OnPrimaryWeaponPerformed(InputAction.CallbackContext _) => SwitchWeapon?.Invoke();
-			void OnSecondaryWeaponPerformed(InputAction.CallbackContext _) => SwitchWeapon?.Invoke();
+			void OnSwitchWeaponPerformed(InputAction.CallbackContext _) => SwitchWeapon?.Invoke(pia.Player.SwitchWeapon.ReadValue<float>());
 
 			void RemoveListeners()
 			{
 				pia.Player.Shoot.performed -= OnShootPerformed;
 				pia.Player.Shoot.canceled -= OnShootCancelled;
 				pia.Player.Reload.performed -= OnReloadPerformed;
-				pia.Player.PrimaryWeapon.performed -= OnPrimaryWeaponPerformed;
-				pia.Player.SecondaryWeapon.performed -= OnSecondaryWeaponPerformed;
+				pia.Player.SwitchWeapon.performed -= OnSwitchWeaponPerformed;
 			}
 		}
 
@@ -102,6 +97,7 @@ namespace tds.Input
 			
 			pia.Player.Shoot.Disable();
 			pia.Player.Reload.Disable();
+			pia.Player.SwitchWeapon.Disable();
 		}
 	}
 }

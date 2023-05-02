@@ -15,11 +15,12 @@ public class AutomaticWeapon : Weapon
 		float interval = timeBetweenShots;
 		elapsedSinceLastShot += dt;
 
+		if (currentlyReloading)
+			return;
+
 		if (shootPressed && elapsedSinceLastShot >= interval && roundsInMagazine > 0)
 		{
-			roundsInMagazine--;
 			elapsedSinceLastShot = 0f;
-			onShot?.Invoke();
 			base.OnShoot(shootPressed, dt, onShot);
 		}
 	}
