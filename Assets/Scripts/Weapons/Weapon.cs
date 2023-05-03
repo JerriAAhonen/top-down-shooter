@@ -45,8 +45,8 @@ public abstract class Weapon : MonoBehaviour
 	/// <param name="onShot">Did shoot</param>
 	public virtual void OnShoot(bool shootPressed, float dt, Action onShot)
 	{
-		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 		roundsInMagazine--;
+		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 		onShot?.Invoke();
 	}
 

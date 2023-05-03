@@ -26,18 +26,18 @@ public class SingleShotWeapon : Weapon
 			base.OnShoot(shootPressed, dt, onShot);
 			hasReleasedShootButton = false;
 			hasCocked = false;
-			Debug.Log("Shoot");
+			//Debug.Log("Shoot");
 		}
 		else if (CanReleaseShootButton())
 		{
 			hasReleasedShootButton = true;
-			Debug.Log("Release shoot/cock button");
+			//Debug.Log("Release shoot/cock button");
 		}
 		else if (CanCock())
 		{
 			hasCocked = true;
 			hasReleasedShootButton = false;
-			Debug.Log("Cock weapon");
+			//Debug.Log("Cock weapon");
 		}
 
 		bool CanShoot() =>  shootPressed && hasReleasedShootButton && hasCocked && roundsInMagazine > 0;

@@ -53,7 +53,7 @@ MonoBehaviour:
   magazineCapacity: 24
   reloadTime: 2
   weaponOutput: {fileID: 5598108788563087128}
-  fireRate: 200
+  fireRate: 600
 --- !u!114 &5598108788563087128
 MonoBehaviour:
   m_ObjectHideFlags: 0
