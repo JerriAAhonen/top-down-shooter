@@ -44,11 +44,19 @@ public class PlayerController : NetworkBehaviour
 
 	public override void OnNetworkSpawn()
 	{
+		MainRpc.Instance.RegisterPlayer(this);
+
 		if (NetworkObject.IsOwner)
 		{
 			InputManager.Instance.Shoot += shooting.OnShootPressed;
 			InputManager.Instance.Reload += shooting.OnReloadPressed;
 		}
+	}
+
+	public override void OnDestroy()
+	{
+		MainRpc.Instance.RegisterPlayer(this);
+		base.OnDestroy();
 	}
 
 	private void PlayerMovement()
