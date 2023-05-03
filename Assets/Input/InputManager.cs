@@ -24,6 +24,7 @@ namespace tds.Input
 		public event Action<bool> LeanLeft;
 		public event Action Reload;
 		public event Action<float> SwitchWeapon;
+		public event Action Pause;
 
 		protected override void Awake()
 		{
@@ -72,12 +73,16 @@ namespace tds.Input
 			pia.Player.SwitchWeapon.performed += OnSwitchWeaponPerformed;
 			pia.Player.SwitchWeapon.Enable();
 
+			pia.Player.Pause.performed += OnPausePerformed;
+			pia.Player.Pause.Enable();
+
 			removeListeners = RemoveListeners;
 			
 			void OnShootPerformed(InputAction.CallbackContext _) => Shoot?.Invoke(true);
 			void OnShootCancelled(InputAction.CallbackContext _) => Shoot?.Invoke(false);
 			void OnReloadPerformed(InputAction.CallbackContext _) => Reload?.Invoke();
 			void OnSwitchWeaponPerformed(InputAction.CallbackContext _) => SwitchWeapon?.Invoke(pia.Player.SwitchWeapon.ReadValue<float>());
+			void OnPausePerformed(InputAction.CallbackContext _) => Pause?.Invoke();
 
 			void RemoveListeners()
 			{
@@ -85,6 +90,7 @@ namespace tds.Input
 				pia.Player.Shoot.canceled -= OnShootCancelled;
 				pia.Player.Reload.performed -= OnReloadPerformed;
 				pia.Player.SwitchWeapon.performed -= OnSwitchWeaponPerformed;
+				pia.Player.Pause.performed -= OnPausePerformed;
 			}
 		}
 
@@ -98,6 +104,7 @@ namespace tds.Input
 			pia.Player.Shoot.Disable();
 			pia.Player.Reload.Disable();
 			pia.Player.SwitchWeapon.Disable();
+			pia.Player.Pause.Disable();
 		}
 	}
 }
