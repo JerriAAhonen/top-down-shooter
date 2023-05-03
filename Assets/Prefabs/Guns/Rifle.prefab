@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2611587897139540911}
   - component: {fileID: 2297137015848366153}
+  - component: {fileID: 5598108788563087128}
   m_Layer: 0
   m_Name: Rifle
   m_TagString: Untagged
@@ -51,7 +52,22 @@ MonoBehaviour:
   rearGripRef: {fileID: 0}
   magazineCapacity: 24
   reloadTime: 2
+  weaponOutput: {fileID: 5598108788563087128}
   fireRate: 200
+--- !u!114 &5598108788563087128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4662159109792265167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83dd2d97632f14b48a1ea1e4364ab8d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileCount: 1
+  maxScatterAngle: 0
 --- !u!1001 &8402086981495269059
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8845108211576738892}
   - component: {fileID: 3402325127504521966}
+  - component: {fileID: 2245984458599650507}
   m_Layer: 0
   m_Name: Shotgun
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_Children:
   - {fileID: 1223822167558069588}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3402325127504521966
 MonoBehaviour:
@@ -51,6 +52,21 @@ MonoBehaviour:
   rearGripRef: {fileID: 0}
   magazineCapacity: 5
   reloadTime: 0.5
+  weaponOutput: {fileID: 2245984458599650507}
+--- !u!114 &2245984458599650507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3387992138299045663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83dd2d97632f14b48a1ea1e4364ab8d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileCount: 10
+  maxScatterAngle: 0.1
 --- !u!1001 &1689231096647088831
 PrefabInstance:
   m_ObjectHideFlags: 0

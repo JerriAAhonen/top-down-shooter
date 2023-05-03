@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ActorShooting : NetworkBehaviour
 {
-	[SerializeField] private Weapon currentWeapon;
+	[SerializeField] private ActorWeapons aw;
 	[SerializeField] private Transform shootPoint;
 	[SerializeField] private ParticleSystem projectilePS;
 	[SerializeField] private ParticleSystem casingPS;
@@ -30,28 +30,47 @@ public class ActorShooting : NetworkBehaviour
 
 	public void OnReloadPressed()
 	{
-		currentWeapon?.OnReload();
+		if (aw.CurrentWeapon == null) 
+			return;
+		aw.CurrentWeapon.OnReload();
 	}
 
 	public void Process()
 	{
-		currentWeapon?.OnShoot(shootPressed, Time.fixedDeltaTime, OnShot);
+		if (aw.CurrentWeapon == null)
+			return;
+
+		aw.CurrentWeapon.OnShoot(shootPressed, Time.fixedDeltaTime, OnShot);
 
 		void OnShot()
 		{
-			Vector3 from = shootPoint.position;
-			Vector3 to = CursorController.Instance.AimPoint;
-			Vector3 direction = to - from;
+			var output = aw.CurrentWeapon.WeaponOutput;
+			if (output.ProjectileCount > 1)
+			{
+				for (int i = 0; i < output.ProjectileCount; i++)
+				{
+					var randX = Random.Range(-output.MaxScatterAngle, output.MaxScatterAngle);
+					var randY = Random.Range(-output.MaxScatterAngle, output.MaxScatterAngle);
+					var dir = shootPoint.forward + new Vector3(randX, randY, 0f);
+					ExecuteMultiShot(dir, i == output.ProjectileCount - 1);
+				}
+			}
+			else
+			{
+				Vector3 from = shootPoint.position;
+				Vector3 to = CursorController.Instance.AimPoint;
+				Vector3 direction = to - from;
 
-			// Only execute the shot here for clients, since host's execution happens later.
-			if (!NetworkObject.IsOwnedByServer)
-				ExecuteShot(from, direction);
+				// Only execute the shot here for clients, since host's execution happens later.
+				if (!NetworkObject.IsOwnedByServer)
+					ExecuteSingleShot(from, direction);
 
-			Shoot_ServerRpc(from, direction);
+				Shoot_ServerRpc(from, direction);
+			}
 		}
 	}
 
-	private void ExecuteShot(Vector3 from, Vector3 direction)
+	private void ExecuteSingleShot(Vector3 _, Vector3 __)
 	{
 		projectilePS.Play();
 		casingPS.Play();
@@ -59,10 +78,24 @@ public class ActorShooting : NetworkBehaviour
 		muzzleSmokePS.Play();
 	}
 
+	private void ExecuteMultiShot(Vector3 dir, bool isLast)
+	{
+		projectilePS.transform.rotation = Quaternion.LookRotation(dir, Vector3.up);
+		projectilePS.Emit(1);
+
+		if (isLast)
+		{
+			projectilePS.Play();
+			casingPS.Play();
+			muzzleFlashPS.Play();
+			muzzleSmokePS.Play();
+		}
+	}
+
 	[ServerRpc(RequireOwnership = true)]
 	private void Shoot_ServerRpc(Vector3 from, Vector3 direction, ServerRpcParams serverRpcParams = default)
 	{
-		ExecuteShot(from, direction);
+		ExecuteSingleShot(from, direction);
 		Shoot_ClientRpc(from, direction);
 
 		var ray = new Ray(from, direction);
@@ -79,6 +112,6 @@ public class ActorShooting : NetworkBehaviour
 	{
 		// Execute shot only if not owned (owner's execution happens instantly when shooting)
 		if (!NetworkObject.IsOwner)
-			ExecuteShot(from, direction);
+			ExecuteSingleShot(from, direction);
 	}
 }

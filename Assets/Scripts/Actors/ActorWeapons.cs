@@ -8,14 +8,26 @@ public class ActorWeapons : MonoBehaviour
 	[SerializeField] private List<WeaponMap> weaponMap;
 	[SerializeField] private Transform gunRoot;
 
+	private Dictionary<WeaponID, Weapon> weapons;
 	private WeaponID currentWeaponID;
 	private Weapon currentWeapon;
 
 	public Weapon CurrentWeapon => currentWeapon;
 
+	private void Awake()
+	{
+		weapons = new Dictionary<WeaponID, Weapon>();
+		foreach (var item in weaponMap)
+			weapons.Add(item.id, item.weapon);
+
+		foreach (Transform child in gunRoot)
+			child.gameObject.SetActive(false);
+
+		ChangeWeapon(0);
+	}
+
 	private void Start()
 	{
-		ChangeWeapon(0);
 		InputManager.Instance.SwitchWeapon += OnSwitchWeapon;
 	}
 
@@ -46,13 +58,13 @@ public class ActorWeapons : MonoBehaviour
 
 	public void ChangeWeapon(WeaponID id)
 	{
-		if (currentWeapon != null)
-			currentWeapon.gameObject.SetActive(false);
+		if (!weapons.ContainsKey(id))
+			return;
 
-		var newMap = weaponMap.Find(x => x.id == id);
-		newMap.weapon.gameObject.SetActive(true);
+		weapons[id].gameObject.SetActive(true);
+		currentWeapon = weapons[id];
 		currentWeaponID = id;
-		currentWeapon = newMap.weapon;
+		Debug.Log($"New Weapon: {currentWeapon.DisplayName}");
 	}
 
 	[Serializable]

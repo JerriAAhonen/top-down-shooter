@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 9198698063251134870}
   - component: {fileID: 7033485121841291714}
+  - component: {fileID: 7342051155074411515}
+  - component: {fileID: 2977588834446746327}
   - component: {fileID: 1433799225723580875}
   - component: {fileID: 3471243966820972479}
   - component: {fileID: 434896806762716740}
   - component: {fileID: 3528746714515702070}
   - component: {fileID: 5227908419811125866}
   - component: {fileID: 5247504623069211216}
-  - component: {fileID: 7342051155074411515}
   - component: {fileID: 2702481086500373349}
   m_Layer: 0
   m_Name: BadGuy
@@ -62,6 +63,38 @@ MonoBehaviour:
   shootPoint: {fileID: 2788743398975873702}
   shooting: {fileID: 7342051155074411515}
   animator: {fileID: 6758911240915581916}
+--- !u!114 &7342051155074411515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630198710051155083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b378b72c3b07bf4780f35bc6a41b4c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aw: {fileID: 2977588834446746327}
+  shootPoint: {fileID: 2788743398975873702}
+  projectilePS: {fileID: 4063323423639801045}
+  casingPS: {fileID: 7662318894306180750}
+  muzzleFlashPS: {fileID: 6857884552852303556}
+  muzzleSmokePS: {fileID: 2264414039291969572}
+--- !u!114 &2977588834446746327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 630198710051155083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6d8721c2389bc441a035180c75fe731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponMap: []
+  gunRoot: {fileID: 4854892418097987328}
 --- !u!54 &1433799225723580875
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -179,25 +212,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 6758911240915581916}
---- !u!114 &7342051155074411515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 630198710051155083}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b378b72c3b07bf4780f35bc6a41b4c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentWeapon: {fileID: 4001106750295756161}
-  shootingInterval: 0.1
-  shootPoint: {fileID: 2788743398975873702}
-  projectilePS: {fileID: 4063323423639801045}
-  casingPS: {fileID: 7662318894306180750}
-  muzzleFlashPS: {fileID: 6857884552852303556}
-  muzzleSmokePS: {fileID: 2264414039291969572}
 --- !u!114 &2702481086500373349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,7 +402,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 889990654878748263}
-  - {fileID: 7767613480290581840}
+  - {fileID: 4287686442131999016}
   m_Father: {fileID: 9198698063251134870}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: -180}
@@ -539,7 +553,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2719160219912716527}
+  - {fileID: 6590829456611998944}
   m_Father: {fileID: 4854892418097987328}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -561,6 +575,7 @@ MonoBehaviour:
   rearGripRef: {fileID: 0}
   magazineCapacity: 24
   reloadTime: 1
+  weaponOutput: {fileID: 0}
   fireRate: 100
 --- !u!1001 &911675869048227405
 PrefabInstance:
@@ -995,7 +1010,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de1bd3672414a7948af4a94abba2ef8c, type: 3}
---- !u!4 &7767613480290581840 stripped
+--- !u!4 &4287686442131999016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: de1bd3672414a7948af4a94abba2ef8c,
     type: 3}
@@ -1169,7 +1184,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6a250150a58a3a4bbff2dca1b954065, type: 3}
---- !u!4 &2719160219912716527 stripped
+--- !u!4 &6590829456611998944 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d6a250150a58a3a4bbff2dca1b954065,
     type: 3}

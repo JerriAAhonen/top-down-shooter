@@ -19,13 +19,16 @@ public abstract class Weapon : MonoBehaviour
 	[Header("Attributes")]
 	[SerializeField] private int magazineCapacity;
 	[SerializeField] private float reloadTime;
+	[SerializeField] private WeaponOutput weaponOutput;
 
 	protected int totalAmmo;
 	protected int roundsInMagazine;
 	protected bool currentlyReloading;
 
+	public WeaponOutput WeaponOutput => weaponOutput;
 	public Transform FrontGripRef => frontGripRef;
 	public Transform RearGripRef => rearGripRef;
+	public string DisplayName => displayName;
 
 	protected virtual void Start()
 	{

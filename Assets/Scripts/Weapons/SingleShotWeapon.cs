@@ -6,12 +6,14 @@ using UnityEngine;
 public class SingleShotWeapon : Weapon
 {
 	private bool hasReleasedShootButton;
+	private bool hasCocked;
 
 	protected override void Start()
 	{
 		base.Start();
 
 		hasReleasedShootButton = true;
+		hasCocked = true;
 	}
 
 	public override void OnShoot(bool shootPressed, float dt, Action onShot)
@@ -19,21 +21,27 @@ public class SingleShotWeapon : Weapon
 		if (currentlyReloading)
 			return;
 
-		if (shootPressed && hasReleasedShootButton && roundsInMagazine > 0)
+		if (CanShoot())
 		{
 			base.OnShoot(shootPressed, dt, onShot);
 			hasReleasedShootButton = false;
+			hasCocked = false;
 			Debug.Log("Shoot");
 		}
-		else if (!shootPressed)
+		else if (CanReleaseShootButton())
 		{
 			hasReleasedShootButton = true;
-			Debug.Log("Release shoot button");
+			Debug.Log("Release shoot/cock button");
 		}
-		else if (hasReleasedShootButton && shootPressed && roundsInMagazine == 0)
+		else if (CanCock())
 		{
-			OnReload();
-			Debug.Log("Reload");
+			hasCocked = true;
+			hasReleasedShootButton = false;
+			Debug.Log("Cock weapon");
 		}
+
+		bool CanShoot() =>  shootPressed && hasReleasedShootButton && hasCocked && roundsInMagazine > 0;
+		bool CanReleaseShootButton() => !shootPressed && !hasReleasedShootButton;
+		bool CanCock() => shootPressed && hasReleasedShootButton && !hasCocked && roundsInMagazine > 0;
 	}
 }
