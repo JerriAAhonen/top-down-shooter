@@ -67,7 +67,7 @@ public class ActorWeapons : MonoBehaviour
 
 		currentWeapon.OnEquip();
 
-		Debug.Log($"New Weapon: {currentWeapon.DisplayName}");
+		//Debug.Log($"New Weapon: {currentWeapon.DisplayName}");
 	}
 
 	[Serializable]

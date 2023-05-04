@@ -16,7 +16,6 @@ public class ParticleSystemProjectile : MonoBehaviour
 	private IObjectPool<ParticleSystem> impactPSPool;
 	private readonly List<ParticleSystem> activeParticleSystems = new();
 
-	// TODO: Pooling
 	private IObjectPool<GameObject> bulletHolePool;
 	private readonly Dictionary<GameObject, float> activeBulletHoles = new();
 
@@ -90,8 +89,6 @@ public class ParticleSystemProjectile : MonoBehaviour
 			ps.Play();
 
 			// Bullet holes
-			// TODO: Pooling
-
 			var hole = bulletHolePool.Get();
 			hole.transform.SetPositionAndRotation(
 				e.intersection + e.normal * 0.1f,
