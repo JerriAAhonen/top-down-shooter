@@ -48,6 +48,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   impactPS: {fileID: 4982065707525617736, guid: d19fde6ad6f2d184cbe2b32716eb5b17,
     type: 3}
+  bulletHole: {fileID: 4203146858827119455, guid: 893272b92dd72f44ab9a40b4e258666f,
+    type: 3}
   clutterMask:
     serializedVersion: 2
     m_Bits: 64

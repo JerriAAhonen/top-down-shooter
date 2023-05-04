@@ -6,20 +6,24 @@ using UnityEngine.Pool;
 public class ParticleSystemProjectile : MonoBehaviour
 {
 	[SerializeField] private ParticleSystem impactPS;
+	[SerializeField] private GameObject bulletHole;
 	[SerializeField] private LayerMask clutterMask;
 
 	private ParticleSystem ps;
 	private readonly List<ParticleCollisionEvent> events = new();
 
-	// Impact Particle System pool
-	private IObjectPool<ParticleSystem> pool;
+	private IObjectPool<ParticleSystem> impactPSPool;
 	private readonly List<ParticleSystem> activeParticleSystems = new();
+
+	// TODO: Pooling
+	private IObjectPool<GameObject> bulletHolePool;
+	private readonly List<GameObject> activeBulletHoles = new();
 
 	private void Awake()
 	{
 		ps = GetComponent<ParticleSystem>();
 
-		pool = new ObjectPool<ParticleSystem>(
+		impactPSPool = new ObjectPool<ParticleSystem>(
 			CreateParticleSystem,
 			ps =>
 			{
@@ -33,6 +37,9 @@ public class ParticleSystemProjectile : MonoBehaviour
 			},
 			Destroy);
 
+		// TODO: Pooling
+		//bulletHolePool = new ObjectPool<GameObject>
+
 		ParticleSystem CreateParticleSystem()
 		{
 			return Instantiate(impactPS);
@@ -45,7 +52,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 		{
 			if (!ps.IsAlive())
 			{
-				pool.Release(ps);
+				impactPSPool.Release(ps);
 				return;
 			}
 		}
@@ -56,11 +63,18 @@ public class ParticleSystemProjectile : MonoBehaviour
 		ps.GetCollisionEvents(other, events);
 		foreach (var e in events)
 		{
-			var ps = pool.Get();
+			var ps = impactPSPool.Get();
 			ps.transform.SetPositionAndRotation(
 				e.intersection, 
 				Quaternion.LookRotation(Vector3.Reflect(e.velocity, e.normal)));
 			ps.Play();
+
+			// Bullet holes
+			// TODO: Pooling
+			var hole = Instantiate(bulletHole);
+			hole.transform.SetPositionAndRotation(
+				e.intersection + e.normal * 0.1f,
+				Quaternion.LookRotation(-e.normal));
 		}
 
 		if (other.layer == clutterMask)
