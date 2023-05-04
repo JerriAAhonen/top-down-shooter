@@ -50,6 +50,7 @@ MonoBehaviour:
     type: 3}
   bulletHole: {fileID: 4203146858827119455, guid: 893272b92dd72f44ab9a40b4e258666f,
     type: 3}
+  bulletHoleDespawnDuration: 5
   clutterMask:
     serializedVersion: 2
     m_Bits: 64
@@ -3943,7 +3944,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 65
+      m_Bits: 449
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5

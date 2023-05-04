@@ -7,6 +7,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 {
 	[SerializeField] private ParticleSystem impactPS;
 	[SerializeField] private GameObject bulletHole;
+	[SerializeField] private float bulletHoleDespawnDuration;
 	[SerializeField] private LayerMask clutterMask;
 
 	private ParticleSystem ps;
@@ -17,7 +18,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 
 	// TODO: Pooling
 	private IObjectPool<GameObject> bulletHolePool;
-	private readonly List<GameObject> activeBulletHoles = new();
+	private readonly Dictionary<GameObject, float> activeBulletHoles = new();
 
 	private void Awake()
 	{
@@ -37,13 +38,23 @@ public class ParticleSystemProjectile : MonoBehaviour
 			},
 			Destroy);
 
-		// TODO: Pooling
-		//bulletHolePool = new ObjectPool<GameObject>
+		bulletHolePool = new ObjectPool<GameObject>(
+			CreateBulletHole,
+			bh =>
+			{
+				bh.SetActive(true);
+				activeBulletHoles.Add(bh, Time.realtimeSinceStartup);
+			},
+			bh =>
+			{
+				bh.SetActive(false);
+				bh.transform.parent = null;
+				activeBulletHoles.Remove(bh);
+			},
+			Destroy);
 
-		ParticleSystem CreateParticleSystem()
-		{
-			return Instantiate(impactPS);
-		}
+		ParticleSystem CreateParticleSystem() => Instantiate(impactPS);
+		GameObject CreateBulletHole() => Instantiate(bulletHole);
 	}
 
 	private void LateUpdate()
@@ -56,6 +67,15 @@ public class ParticleSystemProjectile : MonoBehaviour
 				return;
 			}
 		}
+
+        foreach (var bh in activeBulletHoles)
+        {
+			if (Time.realtimeSinceStartup - bh.Value > bulletHoleDespawnDuration)
+            {
+				bulletHolePool.Release(bh.Key);
+				return;
+            }
+        }
 	}
 
 	private void OnParticleCollision(GameObject other)
@@ -71,10 +91,12 @@ public class ParticleSystemProjectile : MonoBehaviour
 
 			// Bullet holes
 			// TODO: Pooling
-			var hole = Instantiate(bulletHole);
+
+			var hole = bulletHolePool.Get();
 			hole.transform.SetPositionAndRotation(
 				e.intersection + e.normal * 0.1f,
 				Quaternion.LookRotation(-e.normal));
+			hole.transform.parent = other.transform;
 		}
 
 		if (other.layer == clutterMask)
