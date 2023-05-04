@@ -16,6 +16,9 @@ public class CoreUI : Singleton<CoreUI>
 	[SerializeField] private TextMeshProUGUI ammoInMagazine;
 	[SerializeField] private TextMeshProUGUI ammoTotal;
 
+	[Header("Weapon")]
+	[SerializeField] private TextMeshProUGUI weaponDisplayName;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -47,5 +50,10 @@ public class CoreUI : Singleton<CoreUI>
 	{
 		ammoInMagazine.text = inMagazine.ToString();
 		ammoTotal.text = total.ToString();
+	}
+
+	public void ChangeWeapon(Weapon weapon)
+	{
+		weaponDisplayName.text = weapon.DisplayName;
 	}
 }

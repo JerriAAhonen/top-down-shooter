@@ -34,7 +34,7 @@ public abstract class Weapon : MonoBehaviour
 	{
 		roundsInMagazine = magazineCapacity;
 		totalAmmo = 200;
-		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
+		UpdateAmmunition();
 	}
 
 	/// <summary>
@@ -46,13 +46,19 @@ public abstract class Weapon : MonoBehaviour
 	public virtual void OnShoot(bool shootPressed, float dt, Action onShot)
 	{
 		roundsInMagazine--;
-		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
+		UpdateAmmunition();
 		onShot?.Invoke();
 	}
 
 	public virtual void OnReload()
 	{
 		StartCoroutine(DoReload());
+	}
+
+	public void OnEquip()
+	{
+		UpdateAmmunition();
+		CoreUI.Instance.ChangeWeapon(this);
 	}
 
 	protected virtual IEnumerator DoReload()
@@ -66,6 +72,11 @@ public abstract class Weapon : MonoBehaviour
 		roundsInMagazine = magazineCapacity;
 		totalAmmo -= roundsInMagazine;
 
+		UpdateAmmunition();
+	}
+
+	private void UpdateAmmunition()
+	{
 		CoreUI.Instance.UpdateAmmunition(roundsInMagazine, totalAmmo);
 	}
 }

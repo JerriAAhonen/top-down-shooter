@@ -22,18 +22,17 @@ public class ActorWeapons : MonoBehaviour
 
 		foreach (Transform child in gunRoot)
 			child.gameObject.SetActive(false);
-
-		ChangeWeapon(0);
 	}
 
 	private void Start()
 	{
 		InputManager.Instance.SwitchWeapon += OnSwitchWeapon;
+		ChangeWeapon(0);
 	}
 
 	private void OnSwitchWeapon(float f)
 	{
-		Debug.Log($"Switch weapon, f: {f}");
+		//Debug.Log($"Switch weapon, f: {f}");
 		if (f > 0)
 			NextWeapon();
 		else if (f < 0) 
@@ -61,9 +60,13 @@ public class ActorWeapons : MonoBehaviour
 		if (!weapons.ContainsKey(id))
 			return;
 
+		weapons[currentWeaponID].gameObject.SetActive(false);
 		weapons[id].gameObject.SetActive(true);
 		currentWeapon = weapons[id];
 		currentWeaponID = id;
+
+		currentWeapon.OnEquip();
+
 		Debug.Log($"New Weapon: {currentWeapon.DisplayName}");
 	}
 

@@ -44,4 +44,10 @@ public class SingleShotWeapon : Weapon
 		bool CanReleaseShootButton() => !shootPressed && !hasReleasedShootButton;
 		bool CanCock() => shootPressed && hasReleasedShootButton && !hasCocked && roundsInMagazine > 0;
 	}
+
+	public override void OnReload()
+	{
+		base.OnReload();
+		hasCocked = true;
+	}
 }
