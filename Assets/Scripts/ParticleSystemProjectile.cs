@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using static UnityEditor.Experimental.GraphView.GraphView;
+using UnityEngine.UI;
 
 public class ParticleSystemProjectile : MonoBehaviour
 {
@@ -94,12 +96,14 @@ public class ParticleSystemProjectile : MonoBehaviour
 				e.intersection + e.normal * 0.1f,
 				Quaternion.LookRotation(-e.normal));
 			hole.transform.parent = other.transform;
-		}
 
-		if (other.layer == clutterMask)
-		{
-			var rb = other.GetComponent<Rigidbody>();
-			rb.AddForce(events[0].velocity, ForceMode.Impulse);
+			if ((clutterMask & (1 << other.layer)) != 0)
+			{
+				var clutter = other.GetComponent<Clutter>();
+				clutter.RigidBody.AddForce(events[0].velocity * 0.2f, ForceMode.Impulse);
+				if (clutter.Damage(5))
+					clutter.Break(20f, events[0].intersection, 2f);
+			}
 		}
 	}
 }
