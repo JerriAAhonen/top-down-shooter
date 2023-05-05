@@ -63,6 +63,7 @@ MonoBehaviour:
   shootPoint: {fileID: 2788743398975873702}
   shooting: {fileID: 7342051155074411515}
   animator: {fileID: 6758911240915581916}
+  animationTransitionSpeed: 5
 --- !u!114 &7342051155074411515
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,10 +12,12 @@ public class PlayerController : NetworkBehaviour
 	[SerializeField] private ActorShooting shooting;
 	[Header("Animations")]
 	[SerializeField] private Animator animator;
+	[SerializeField] private float animationTransitionSpeed;
 
 	private CameraController playerCamera;
 	private Rigidbody rb;
 	private Vector3 velocity;
+	private Vector3 animationVelocity;
 
 	public Transform ShootPoint => shootPoint;
 
@@ -71,7 +73,6 @@ public class PlayerController : NetworkBehaviour
 		var relativeRotationPos = shootPoint.position;
 		relativeRotationPos.y = 0f;
 
-		// TODO: If the aim pos is between the player and the shootpoint, this breaks
 		var rotation = Quaternion.LookRotation(target - relativeRotationPos);
 		rb.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
@@ -92,7 +93,10 @@ public class PlayerController : NetworkBehaviour
 		localVelocity /= Time.deltaTime * movementSpeed;
 		localVelocity = localVelocity.Clamp(-1f, 1f);
 
-		animator.SetFloat("X", localVelocity.x);
-		animator.SetFloat("Z", localVelocity.z);
+		// Smooth out the transitions in animations
+		animationVelocity = Vector3.Lerp(animationVelocity, localVelocity, Time.deltaTime * animationTransitionSpeed);
+
+		animator.SetFloat("X", animationVelocity.x);
+		animator.SetFloat("Z", animationVelocity.z);
 	}
 }
