@@ -58,8 +58,7 @@ public class CursorController : Singleton<CursorController>
 			currentOutline.enabled = false;
 			currentOutline = null;
 		}
-
-		if (Physics.Raycast(ray, out hit, Mathf.Infinity, defaultAimHeightMask))
+		else if (Physics.Raycast(ray, out hit, Mathf.Infinity, defaultAimHeightMask))
 		{
 			var hitPoint = hit.point.SetY(player.ShootPoint.position.y);
 			if (IsTooClose(hitPoint))
