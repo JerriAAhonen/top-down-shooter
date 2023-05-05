@@ -50,5 +50,26 @@ public class Clutter : MonoBehaviour
 			partRb.isKinematic = false;
 			partRb.AddExplosionForce(force, forcePos, explosionRadius);
 		}
+
+		StartCoroutine(DespawnRoutine());
+	}
+
+	private IEnumerator DespawnRoutine()
+	{
+		yield return new WaitForSeconds(5);
+
+		var duration = 5f;
+		var elapsed = 0f;
+		while (elapsed < duration)
+		{
+			yield return null;
+			elapsed += Time.deltaTime;
+
+			var scale = 1 - (elapsed / duration);
+			foreach (var partCol in partColliders)
+				partCol.transform.localScale = Vector3.one * scale;
+		}
+
+		Destroy(gameObject);
 	}
 }
