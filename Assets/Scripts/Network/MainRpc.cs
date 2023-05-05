@@ -28,7 +28,7 @@ public class MainRpc : NetworkBehaviour
 	{
 		var go = Instantiate(prefabs.GetPlayer(data));
 		var no = go.GetComponent<NetworkObject>();
-		no.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
+		no.SpawnAsPlayerObject(serverRpcParams.Receive.SenderClientId);
 
 		Players.Add(go.GetComponent<PlayerController>());
 	}
