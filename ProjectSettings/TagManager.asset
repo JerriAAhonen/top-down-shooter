@@ -15,8 +15,8 @@ TagManager:
   - Clutter
   - Ground
   - Wall
-  - 
-  - 
+  - FieldOfView
+  - FogOfWar
   - 
   - 
   - 

@@ -16,16 +16,21 @@ public class SyncedPrefabDb : ScriptableObject
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
+		string[] guids = UnityEditor.AssetDatabase.FindAssets("t:NetworkPrefabsList");
+		if (guids.Length == 0)
+			return;
+
+		string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+		var list = UnityEditor.AssetDatabase.LoadAssetAtPath<NetworkPrefabsList>(path);
+		if (!list)
+			return;
+
 		var all = new List<GameObject>();
 		all.AddRange(systems);
 		all.AddRange(players);
 		all.AddRange(enemies);
 		all.RemoveAll(Is.Null);
 		all.RemoveDuplicates();
-
-		string guid = UnityEditor.AssetDatabase.FindAssets("t:NetworkPrefabsList")[0];
-		string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-		var list = UnityEditor.AssetDatabase.LoadAssetAtPath<NetworkPrefabsList>(path);
 
 		foreach (var p in new List<NetworkPrefab>(list.PrefabList))
 			list.Remove(p);
