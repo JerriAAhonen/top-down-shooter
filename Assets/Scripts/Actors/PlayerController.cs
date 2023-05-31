@@ -18,6 +18,7 @@ public class PlayerController : ActorController
 
 	public override void OnNetworkSpawn()
 	{
+		base.OnNetworkSpawn();
 		MainRpc.Instance.RegisterPlayer(this);
 
 		if (NetworkObject.IsOwner)

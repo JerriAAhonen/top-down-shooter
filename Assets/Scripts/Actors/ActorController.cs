@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,12 +10,17 @@ public abstract class ActorController : NetworkBehaviour
 	[SerializeField] protected LineRenderer aimLine;
 	[SerializeField] protected Transform shootPoint;
 	[SerializeField] protected ActorShooting shooting;
+	[SerializeField] private List<LineOfSightTarget> lineOfSightTargets;
+	[SerializeField] private Transform eyePosition;
 	[Header("Animations")]
 	[SerializeField] protected Animator animator;
 	[SerializeField] private float animationTransitionSpeed;
 
 	protected Rigidbody rb;
 	protected Vector3 animationVelocity;
+
+	public IReadOnlyList<LineOfSightTarget> LineOfSightTargets => lineOfSightTargets;
+	public Transform EyePosition => eyePosition;
 
 	protected virtual void Awake()
 	{
@@ -31,12 +37,12 @@ public abstract class ActorController : NetworkBehaviour
 
 	public override void OnNetworkSpawn()
 	{
-		//LineOfSightController.Instance.Register(this);
+		LineOfSightController.Instance.Register(this, this);
 	}
 
 	public override void OnDestroy()
 	{
-		//LineOfSightController.Instance?.Unregister(this);
+		LineOfSightController.Instance?.Unregister(this);
 		base.OnDestroy();
 	}
 

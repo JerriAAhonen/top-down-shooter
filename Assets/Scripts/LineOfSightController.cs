@@ -5,104 +5,112 @@ using UnityEngine.Pool;
 
 public class LineOfSightController : Singleton<LineOfSightController>
 {
-	private readonly List<Dictionary<NetworkBehaviour, Entry>> actors = new();
+	[SerializeField] private LayerMask wallMask;
 
-	/*private void LateUpdate()
+	private readonly List<Dictionary<NetworkBehaviour, Entry>> teams = new();
+
+	private void LateUpdate()
 	{
-		bool hasSource = source != null;
-		Vector3 sourcePos = hasSource ? sourceTm.position : default;
-		Vector3 sourceDir = (hasSource ? sourceTm.forward : default).SetY(0).normalized;
-		float fov = hasSource ? source.FieldOfView / 2 : 0;
-
-		foreach (var target in registered)
+		// Go through each team, actors.Count = team count
+		for (int i = 0; i < teams.Count; i++)
 		{
-			if (!hasSource)
+			var sourceTeam = teams[i];
+
+			for (int j = 0; j < teams.Count; j++)
 			{
-				target.SetVisible(false);
-				continue;
+				// Don't test against same team members
+				if (i == j) continue;
+
+				var targetTeam = teams[j];
+
+				foreach (var source in sourceTeam)
+				{
+					foreach (var target in targetTeam)
+					{
+						// TODO: Update visible list
+						var visible = IsInSight(target.Value.targets, source.Value.eyePosition.position);
+					}
+				}
 			}
-
-			Vector3 sourceToTarget = target.Transform.position - sourcePos;
-			Debug.DrawLine(sourcePos, sourcePos + sourceDir * 100, Color.white);
-
-			if (sourceToTarget.sqrMagnitude > target.Range * target.Range)
-			{
-				target.SetVisible(false);
-				continue;
-			}
-
-			if (Vector3.Angle(sourceToTarget.SetY(0).normalized, sourceDir) <= fov)
-			{
-				target.SetVisible(IsInSight(target, sourcePos));
-				continue;
-			}
-
-			target.SetVisible(false);
 		}
-	}*/
+	}
 
-	/*private bool IsInSight(LineOfSightTarget target, Vector3 sourcePos)
+	private bool IsInSight(List<LineOfSightTarget> targets, Vector3 origin)
 	{
-		bool didHit = Check(Vector3.zero);
-		didHit = Check(Vector3.left) || didHit;
-		didHit = Check(Vector3.right) || didHit;
-		didHit = Check(Vector3.up) || didHit;
-		didHit = Check(Vector3.down) || didHit;
+		bool didHit = false;
+		foreach (var target in targets)
+		{
+			if (Check(target.transform.position))
+				didHit = true;
+		}
 		return didHit;
 
-		bool Check(Vector3 offset)
+		bool Check(Vector3 posToCheck)
 		{
-			Vector3 origin = target.Collider.bounds.center;
-			origin += offset;
-			
-			var ray = new Ray(origin, (sourcePos - origin).normalized);
-			if (Physics.Raycast(ray, out var hit, 100f) && hit.collider == source.Collider)
+			// What if the position is just outside of the characters collider, an arm for example,
+			// and the raycast doesn't hit the main collider, and doesn't hit anything else either
+
+			var distToTarget = Vector3.Distance(origin, posToCheck);
+			var ray = new Ray(origin, (posToCheck - origin).normalized);
+			if (Physics.Raycast(ray, out var hit, 100f, wallMask))
 			{
-				Debug.DrawLine(origin, sourcePos, Color.green);
+				if (hit.distance < distToTarget)
+				{
+					Debug.DrawLine(origin, posToCheck, Color.yellow);
+					return false;
+				}
+
+				Debug.DrawLine(origin, posToCheck, Color.green);
 				return true;
 			}
-			
-			Debug.DrawLine(origin, sourcePos, Color.yellow);
-			return false;
-		}
-	}*/
 
-	public void Register(NetworkBehaviour nb)
+			Debug.DrawLine(origin, posToCheck, Color.green);
+			return true;
+		}
+	}
+
+	public void Register(NetworkBehaviour nb, ActorController ac)
 	{
 		var no = nb.NetworkObject;
 		int team = GetTeamId(no);
 
 		if (team >= 0)
 		{
-			while (actors.Count <= team)
-				actors.Add(new Dictionary<NetworkBehaviour, Entry>());
+			while (teams.Count <= team)
+				teams.Add(new Dictionary<NetworkBehaviour, Entry>());
 
 			var entry = new Entry
 			{
-				transform = no.transform,
+				eyePosition = ac.EyePosition,
 				collider = no.GetComponent<Collider>(),
+				targets = ListPool<LineOfSightTarget>.Get(),
 				visible = ListPool<NetworkBehaviour>.Get()
 			};
-			actors[team].Add(nb, entry);
+
+			entry.targets.AddRange(ac.LineOfSightTargets);
+			teams[team].Add(nb, entry);
 		}
 	}
 
 	public void Unregister(NetworkBehaviour nb)
 	{
+		if (!nb.IsSpawned) return;
+
 		int team = GetTeamId(nb.NetworkObject);
-		if (team < 0 || team >= actors.Count)
+		if (team < 0 || team >= teams.Count)
 			return;
 
-		var entry = actors[team][nb];
+		var entry = teams[team][nb];
+		ListPool<LineOfSightTarget>.Release(entry.targets);
 		ListPool<NetworkBehaviour>.Release(entry.visible);
-		actors[team].Remove(nb);
+		teams[team].Remove(nb);
 	}
 
 	public void GetVisible(NetworkBehaviour pov, List<NetworkBehaviour> visible)
 	{
 		visible.Clear();
 
-		var entry = actors[GetTeamId(pov.NetworkObject)][pov];
+		var entry = teams[GetTeamId(pov.NetworkObject)][pov];
 		foreach (var v in entry.visible)
 			if (Is.NotNull(v))
 				visible.Add(v);
@@ -110,7 +118,7 @@ public class LineOfSightController : Singleton<LineOfSightController>
 
 	public bool IsVisible(NetworkBehaviour pov, NetworkBehaviour target)
 	{
-		var entry = actors[GetTeamId(pov.NetworkObject)][pov];
+		var entry = teams[GetTeamId(pov.NetworkObject)][pov];
 		return entry.visible.Contains(target);
 	}
 
@@ -123,8 +131,9 @@ public class LineOfSightController : Singleton<LineOfSightController>
 
 	private class Entry
 	{
-		public Transform transform;
+		public Transform eyePosition;
 		public Collider collider;
+		public List<LineOfSightTarget> targets;
 		public List<NetworkBehaviour> visible;
 	}
 }
