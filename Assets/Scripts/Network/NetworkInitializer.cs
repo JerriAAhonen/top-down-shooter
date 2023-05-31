@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Net.Http;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
@@ -6,6 +8,7 @@ using UnityEngine;
 public class NetworkInitializer : MonoBehaviour
 {
 	[SerializeField] private BuildType type;
+	[SerializeField] private string ip = "127.0.0.1";
 	[SerializeField] private Optional<KeyCode> hostButton;
 	[SerializeField] private SyncedPrefabDb prefabs;
 
@@ -22,7 +25,6 @@ public class NetworkInitializer : MonoBehaviour
 
 		var mgr = NetworkManager.Singleton;
 		var ut = (UnityTransport) mgr.NetworkConfig.NetworkTransport;
-		ut.ConnectionData.Address = "127.0.0.1";
 		
 		if (hostButton.HasValue && hostButtonWasClicked
 			|| type == BuildType.Host
@@ -35,6 +37,7 @@ public class NetworkInitializer : MonoBehaviour
 			}
 
 			yield return null;
+			yield return GetMyIp(result => ip = result);
 
 			foreach (var p in prefabs.Systems)
 			{
@@ -47,6 +50,8 @@ public class NetworkInitializer : MonoBehaviour
 		}
 		else
 		{
+			ut.ConnectionData.Address = ip;
+
 			if (!mgr.StartClient())
 			{
 				Debug.LogError("Failed to start client.");
@@ -67,6 +72,15 @@ public class NetworkInitializer : MonoBehaviour
 	{
 		if (!hostButtonWasClicked && hostButton.TryGet(out KeyCode button))
 			hostButtonWasClicked = Input.GetKey(button);
+	}
+
+	private IEnumerator GetMyIp(Action<string> onResult)
+	{
+		var httpClient = new HttpClient();
+		var task = httpClient.GetStringAsync("https://api.ipify.org");
+		while (!task.IsCompleted)
+			yield return null;
+		onResult(task.Result);
 	}
 }
 
