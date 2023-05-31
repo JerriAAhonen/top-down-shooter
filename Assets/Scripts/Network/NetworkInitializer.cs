@@ -25,7 +25,8 @@ public class NetworkInitializer : MonoBehaviour
 
 		var mgr = NetworkManager.Singleton;
 		var ut = (UnityTransport) mgr.NetworkConfig.NetworkTransport;
-		
+		ut.ConnectionData.Address = ip;
+
 		if (hostButton.HasValue && hostButtonWasClicked
 			|| type == BuildType.Host
 			|| type == BuildType.HostIfBuild && !Application.isEditor)
@@ -37,7 +38,6 @@ public class NetworkInitializer : MonoBehaviour
 			}
 
 			yield return null;
-			yield return GetMyIp(result => ip = result);
 
 			foreach (var p in prefabs.Systems)
 			{
@@ -50,8 +50,6 @@ public class NetworkInitializer : MonoBehaviour
 		}
 		else
 		{
-			ut.ConnectionData.Address = ip;
-
 			if (!mgr.StartClient())
 			{
 				Debug.LogError("Failed to start client.");
@@ -72,15 +70,6 @@ public class NetworkInitializer : MonoBehaviour
 	{
 		if (!hostButtonWasClicked && hostButton.TryGet(out KeyCode button))
 			hostButtonWasClicked = Input.GetKey(button);
-	}
-
-	private IEnumerator GetMyIp(Action<string> onResult)
-	{
-		var httpClient = new HttpClient();
-		var task = httpClient.GetStringAsync("https://api.ipify.org");
-		while (!task.IsCompleted)
-			yield return null;
-		onResult(task.Result);
 	}
 }
 
