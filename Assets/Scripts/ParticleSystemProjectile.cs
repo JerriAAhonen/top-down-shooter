@@ -11,6 +11,7 @@ public class ParticleSystemProjectile : MonoBehaviour
 	[SerializeField] private GameObject bulletHole;
 	[SerializeField] private float bulletHoleDespawnDuration;
 	[SerializeField] private LayerMask clutterMask;
+	[SerializeField] private LayerMask actorMask;
 
 	private ParticleSystem ps;
 	private readonly List<ParticleCollisionEvent> events = new();
@@ -84,20 +85,25 @@ public class ParticleSystemProjectile : MonoBehaviour
 		ps.GetCollisionEvents(other, events);
 		foreach (var e in events)
 		{
+			// Impact Effect
 			var ps = impactPSPool.Get();
 			ps.transform.SetPositionAndRotation(
 				e.intersection, 
 				Quaternion.LookRotation(Vector3.Reflect(e.velocity, e.normal)));
 			ps.Play();
 
-			// Bullet holes
-			var hole = bulletHolePool.Get();
-			hole.transform.SetPositionAndRotation(
-				e.intersection + e.normal * 0.1f,
-				Quaternion.LookRotation(-e.normal));
-			hole.transform.parent = other.transform;
+			// Bullet Holes
+			if (BitMaskUtil.MaskDoesNotContainLayer(actorMask, other.layer))
+			{
+				var hole = bulletHolePool.Get();
+				hole.transform.SetPositionAndRotation(
+					e.intersection + e.normal * 0.1f,
+					Quaternion.LookRotation(-e.normal));
+				hole.transform.parent = other.transform;
+			}
 
-			if ((clutterMask & (1 << other.layer)) != 0)
+			// Clutter Damage/Explosions
+			if (BitMaskUtil.MaskContainsLayer(clutterMask, other.layer))
 			{
 				var clutter = other.GetComponent<Clutter>();
 				clutter.RigidBody.AddForce(events[0].velocity * 0.2f, ForceMode.Impulse);

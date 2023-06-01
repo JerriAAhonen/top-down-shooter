@@ -54,6 +54,9 @@ MonoBehaviour:
   clutterMask:
     serializedVersion: 2
     m_Bits: 64
+  actorMask:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!199 &3322205551020419320
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -3944,7 +3947,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 449
+      m_Bits: 2497
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5

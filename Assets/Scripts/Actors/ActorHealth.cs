@@ -3,7 +3,14 @@ using UnityEngine;
 
 public class ActorHealth : NetworkBehaviour
 {
-	private readonly NetworkVariable<int> health = new(100, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+	[SerializeField] private int startingHealth = 10;
+
+	private NetworkVariable<int> health;
+
+	private void Awake()
+	{
+		health = new(startingHealth, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+	}
 
 	public override void OnNetworkSpawn()
 	{
@@ -18,6 +25,7 @@ public class ActorHealth : NetworkBehaviour
 
 	public void DealDamage(int amount)
 	{
+		Debug.Log($"Deal Damage: {amount}, health remaining: {health.Value}");
 		if (health.Value > 0)
 			health.Value = Mathf.Max(health.Value - amount, 0);
 	}

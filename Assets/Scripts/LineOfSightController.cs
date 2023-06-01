@@ -27,6 +27,9 @@ public class LineOfSightController : Singleton<LineOfSightController>
 				{
 					foreach (var target in targetTeam)
 					{
+						if (source.Key == null || target.Key == null) 
+							continue;
+
 						var sourceCanSeeTarget = IsInSight(target.Value.lineOfSightTargets, source.Value.eyePosition.position);
 						if (sourceCanSeeTarget)
 							source.Value.visible.Add(target.Key);
