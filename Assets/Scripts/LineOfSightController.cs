@@ -31,10 +31,10 @@ public class LineOfSightController : Singleton<LineOfSightController>
 							continue;
 
 						var sourceCanSeeTarget = IsInSight(target.Value.lineOfSightTargets, source.Value.eyePosition.position);
-						if (sourceCanSeeTarget)
+						if (sourceCanSeeTarget && !source.Value.visible.Contains(target.Key))
 							source.Value.visible.Add(target.Key);
 						else
-							source.Value.visible.RemoveAll(x => x == target.Key);
+							source.Value.visible.Remove(target.Key);
 					}
 				}
 			}
