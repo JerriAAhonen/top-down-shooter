@@ -27,8 +27,11 @@ public class LineOfSightController : Singleton<LineOfSightController>
 				{
 					foreach (var target in targetTeam)
 					{
-						// TODO: Update visible list
-						var visible = IsInSight(target.Value.targets, source.Value.eyePosition.position);
+						var sourceCanSeeTarget = IsInSight(target.Value.lineOfSightTargets, source.Value.eyePosition.position);
+						if (sourceCanSeeTarget)
+							source.Value.visible.Add(target.Key);
+						else
+							source.Value.visible.RemoveAll(x => x == target.Key);
 					}
 				}
 			}
@@ -47,9 +50,6 @@ public class LineOfSightController : Singleton<LineOfSightController>
 
 		bool Check(Vector3 posToCheck)
 		{
-			// What if the position is just outside of the characters collider, an arm for example,
-			// and the raycast doesn't hit the main collider, and doesn't hit anything else either
-
 			var distToTarget = Vector3.Distance(origin, posToCheck);
 			var ray = new Ray(origin, (posToCheck - origin).normalized);
 			if (Physics.Raycast(ray, out var hit, 100f, wallMask))
@@ -83,11 +83,11 @@ public class LineOfSightController : Singleton<LineOfSightController>
 			{
 				eyePosition = ac.EyePosition,
 				collider = no.GetComponent<Collider>(),
-				targets = ListPool<LineOfSightTarget>.Get(),
+				lineOfSightTargets = ListPool<LineOfSightTarget>.Get(),
 				visible = ListPool<NetworkBehaviour>.Get()
 			};
 
-			entry.targets.AddRange(ac.LineOfSightTargets);
+			entry.lineOfSightTargets.AddRange(ac.LineOfSightTargets);
 			teams[team].Add(nb, entry);
 		}
 	}
@@ -101,7 +101,7 @@ public class LineOfSightController : Singleton<LineOfSightController>
 			return;
 
 		var entry = teams[team][nb];
-		ListPool<LineOfSightTarget>.Release(entry.targets);
+		ListPool<LineOfSightTarget>.Release(entry.lineOfSightTargets);
 		ListPool<NetworkBehaviour>.Release(entry.visible);
 		teams[team].Remove(nb);
 	}
@@ -133,7 +133,7 @@ public class LineOfSightController : Singleton<LineOfSightController>
 	{
 		public Transform eyePosition;
 		public Collider collider;
-		public List<LineOfSightTarget> targets;
+		public List<LineOfSightTarget> lineOfSightTargets;
 		public List<NetworkBehaviour> visible;
 	}
 }
