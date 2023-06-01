@@ -12,6 +12,7 @@ public class ActorShooting : NetworkBehaviour
 	[SerializeField] private ParticleSystem muzzleSmokePS;
 
 	private bool shootPressed;
+	private Vector3[] dirs;
 
 	private void Update()
 	{
@@ -48,20 +49,21 @@ public class ActorShooting : NetworkBehaviour
 			var output = aw.CurrentWeapon.WeaponOutput;
 			var from = shootPoint.position;
 
-			var directions = new Vector3[output.ProjectileCount];
-			for (int i = 0; i < output.ProjectileCount; i++)
+			dirs ??= new Vector3[output.ProjectileCount];
+
+			for (int i = 0; i < dirs.Length; i++)
 			{
 				var randX = Random.Range(-output.MaxScatterAngle, output.MaxScatterAngle);
 				var randY = Random.Range(-output.MaxScatterAngle, output.MaxScatterAngle);
 				var dir = Quaternion.Euler(randX, randY, 0) * shootPoint.forward;
-				directions[i] = dir;
+				dirs[i] = dir;
 
 				// Only execute the shot here for clients, since host's execution happens later.
 				if (!NetworkObject.IsOwnedByServer)
 					ExecuteShot(from, dir, i == output.ProjectileCount - 1);
 			}
 
-			Shoot_ServerRpc(from, directions);
+			Shoot_ServerRpc(from, dirs);
 		}
 	}
 
@@ -102,8 +104,11 @@ public class ActorShooting : NetworkBehaviour
 	[ClientRpc]
 	private void Shoot_ClientRpc(Vector3 from, Vector3[] directions)
 	{
-		// Execute shot only if not owned (owner's execution happens instantly when shooting)
-		for (int i = 0; i < directions.Length; i++)
-			ExecuteShot(from, directions[i], i == directions.Length - 1);
+		if (!NetworkObject.IsOwner)
+		{
+			// Execute shot only if not owned (owner's execution happens instantly when shooting)
+			for (int i = 0; i < directions.Length; i++)
+				ExecuteShot(from, directions[i], i == directions.Length - 1);
+		}
 	}
 }
