@@ -102,8 +102,11 @@ public class ActorShooting : NetworkBehaviour
 	[ClientRpc]
 	private void Shoot_ClientRpc(Vector3 from, Vector3[] directions)
 	{
-		// Execute shot only if not owned (owner's execution happens instantly when shooting)
-		for (int i = 0; i < directions.Length; i++)
-			ExecuteShot(from, directions[i], i == directions.Length - 1);
+		if (!NetworkObject.IsOwner)
+		{
+			// Execute shot only if not owned (owner's execution happens instantly when shooting)
+			for (int i = 0; i < directions.Length; i++)
+				ExecuteShot(from, directions[i], i == directions.Length - 1);
+		}
 	}
 }
