@@ -18,6 +18,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BadGuy (Player)
       objectReference: {fileID: 0}
+    - target: {fileID: 1404620066687584086, guid: 9c02b04af120cd24badc15bb9f7dd80e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3471243966820972479, guid: 9c02b04af120cd24badc15bb9f7dd80e,
         type: 3}
       propertyPath: m_Radius
