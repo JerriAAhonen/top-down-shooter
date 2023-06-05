@@ -11,6 +11,7 @@ public class LevelEditor : MonoBehaviour
 	private Grid grid;
 	private Plane mouseInputPlane;
 	private Transform buildGhost;
+	private Vector3 previousRotation;
 
 	private void Awake()
 	{
@@ -23,6 +24,7 @@ public class LevelEditor : MonoBehaviour
 		if (buildGhost == null)
 		{
 			buildGhost = Instantiate(testCube);
+			buildGhost.rotation = Quaternion.Euler(previousRotation);
 		}
 
 		var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -31,14 +33,18 @@ public class LevelEditor : MonoBehaviour
 			var worldHitPoint = ray.GetPoint(distance);
 			
 			if (grid.GetGridAlignedPosition(worldHitPoint, out var gridAlignedWorldPos))
-			{
 				buildGhost.position = gridAlignedWorldPos;
-			}
 			else
 				buildGhost.position = worldHitPoint;
 
 			if (Input.GetMouseButtonDown(0))
 				ChangeValue(worldHitPoint);
+		}
+
+		if (Input.GetKeyDown(KeyCode.R))
+		{
+			buildGhost.Rotate(0, 90, 0);
+			previousRotation = buildGhost.rotation.eulerAngles;
 		}
     }
 
