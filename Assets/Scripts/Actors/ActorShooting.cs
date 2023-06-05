@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using static UnityEditor.Rendering.CameraUI;
 
 public class ActorShooting : NetworkBehaviour
 {
