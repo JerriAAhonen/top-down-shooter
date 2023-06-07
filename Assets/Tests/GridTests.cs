@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class GridTests
 {
-	private Grid grid;
+	private Grid<int> grid;
 
 	[SetUp]
 	public void Setup()
 	{
-		grid = new Grid(new Vector2Int(5, 5), 1, Vector3.zero);
+		grid = new Grid<int>(new Vector2Int(5, 5), 1, Vector3.zero);
 	}
 
 	[TestCase(0, 0, true)]

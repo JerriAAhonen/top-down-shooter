@@ -1,12 +1,12 @@
 using TMPro;
 using UnityEngine;
 
-public class Grid
+public class Grid<TGridObject>
 {
 	private readonly Vector2Int size;
 	private readonly Vector3 origin;
 	private readonly float cellSize;
-	private readonly int[,] data;
+	private readonly TGridObject[,] data;
 	private readonly TextMeshPro[,] debugData;
 	private readonly Vector3 cellCenterOffset;
 
@@ -15,7 +15,7 @@ public class Grid
 		this.size = size;
 		this.origin = origin;
 		this.cellSize = cellSize;
-		data = new int[size.x, size.y];
+		data = new TGridObject[size.x, size.y];
 		debugData = new TextMeshPro[size.x, size.y];
 		cellCenterOffset = new Vector3(cellSize, 0, cellSize) / 2f;
 
@@ -61,9 +61,9 @@ public class Grid
 	/// <param name="worldPos"></param>
 	/// <param name="result"></param>
 	/// <returns>True if world pos is inside grid</returns>
-	public bool GetValue(Vector3 worldPos, out int result)
+	public bool GetValue(Vector3 worldPos, out TGridObject result)
 	{
-		result = 0;
+		result = default;
 
 		if (!GetGridPosition(worldPos, out var gridPos))
 			return false;
@@ -115,7 +115,7 @@ public class Grid
 
 	#region Setters
 
-	public bool SetValue(Vector3 worldPos, int value)
+	public bool SetValue(Vector3 worldPos, TGridObject value)
 	{
 		if (!GetGridPosition(worldPos, out var gridPos))
 			return false;
@@ -124,7 +124,7 @@ public class Grid
 		return true;
 	}
 
-	private void SetValue(Vector2Int gridPos, int value)
+	private void SetValue(Vector2Int gridPos, TGridObject value)
 	{
 		if (!IsInside(gridPos))
 			return;

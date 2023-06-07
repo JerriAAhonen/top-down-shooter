@@ -4,18 +4,20 @@ using UnityEngine;
 
 public class LevelEditor : MonoBehaviour
 {
+	public enum Category { Wall, Door, Window }
+
 	[SerializeField] private Vector2Int gridSize;
 	[SerializeField] private float cellSize;
 	[SerializeField] private Transform testCube;
 
-	private Grid grid;
+	private Grid<int> grid;
 	private Plane mouseInputPlane;
 	private Transform buildGhost;
 	private Vector3 previousRotation;
 
 	private void Awake()
 	{
-		grid = new Grid(gridSize, cellSize, new Vector3(-gridSize.x, 0, -gridSize.y) / 2f);
+		grid = new Grid<int>(gridSize, cellSize, new Vector3(-gridSize.x, 0, -gridSize.y) / 2f);
 		mouseInputPlane = new Plane(Vector3.up, Vector3.zero);
 	}
 
