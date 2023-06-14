@@ -10,7 +10,7 @@ public class GridTests
 	[SetUp]
 	public void Setup()
 	{
-		grid = new Grid<int>(new Vector2Int(5, 5), 1, Vector3.zero);
+		grid = new Grid<int>(new Vector2Int(5, 5), 1, Vector3.zero, (_,__, ___) => 0);
 	}
 
 	[TestCase(0, 0, true)]
